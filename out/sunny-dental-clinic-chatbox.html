@@ -7,79 +7,114 @@
 <style>
 :root {
   --accent: #0D9AFF; --accent-d: color-mix(in srgb, var(--accent) 78%, #000);
-  --accent-l: color-mix(in srgb, var(--accent) 8%, #fff); --accent-m: color-mix(in srgb, var(--accent) 30%, #fff);
+  --accent-l: color-mix(in srgb, var(--accent) 8%, #fff); --accent-m: color-mix(in srgb, var(--accent) 27%, #fff);
+  --stone: color-mix(in srgb, var(--accent) 14%, #fff);
   --bg: #F6F9FD; --white: #fff; --off: #f1f7fc; --off2: #e8f2fb; --line: #d9e8f4; --line2: #c7dcea;
-  --ink: #101827; --ink2: #243044; --ink3: #5f6b82; --ink4: #8d98aa;
+  --ink: #101827; --ink2: #243044; --ink3: #5f6b82; --ink4: #8d98aa; --ink5: #b7c2d0;
   --mono: ui-monospace, "SF Mono", Menlo, monospace; --sans: -apple-system, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+  --sh-sm: 0 10px 26px color-mix(in srgb, var(--accent) 6%, transparent), 0 1px 3px rgba(16,24,39,.04);
+  --sh-md: 0 18px 44px color-mix(in srgb, var(--accent) 10%, transparent), 0 2px 8px rgba(16,24,39,.05);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--bg); font-family: var(--sans); color: var(--ink); line-height: 1.6; font-size: 14px; }
-.esi-app { max-width: 1080px; margin: 0 auto; padding: 16px; height: 100vh; display: flex; flex-direction: column; gap: 12px; }
-.esi-header { display: flex; align-items: center; gap: 10px; padding: 12px 18px; background: rgba(255,255,255,.9); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 6%, transparent); }
-.esi-brand { font-size: 17px; font-weight: 650; }
-.esi-tagline { font-size: 11px; color: var(--ink4); }
+html { font-size: 14px; }
+body { background: var(--bg); font-family: var(--sans); color: var(--ink); line-height: 1.6; }
+.esi-app { max-width: 1280px; margin: 0 auto; padding: 14px 28px 22px; height: 100vh; display: flex; flex-direction: column; gap: 12px; }
+.esi-header { flex: 0 0 auto; display: flex; align-items: center; gap: 9px; padding: 6px 14px 7px 22px; background: rgba(248,251,255,.92); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 26px color-mix(in srgb, var(--accent) 8%, transparent); backdrop-filter: blur(14px); }
+.esi-header > svg { width: 12px; height: 12px; color: var(--accent); flex: 0 0 auto; }
+.esi-brand { font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--ink2); letter-spacing: .01em; white-space: nowrap; }
+.esi-tag { font-family: var(--mono); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); background: var(--stone); border-radius: 3px; padding: 2px 6px; font-weight: 600; line-height: 1.2; }
+.esi-tagline { font-size: 10.5px; color: var(--ink4); margin-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .esi-spacer { flex: 1; }
-.esi-orb { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line2); background: var(--white); color: var(--ink3); cursor: pointer; font-size: 12px; }
-.esi-orb:hover { color: var(--accent); border-color: var(--accent-m); }
-.esi-main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 280px; gap: 12px; }
-.esi-left { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
-.esi-chat { flex: 1; min-height: 0; overflow-y: auto; padding: 18px; background: linear-gradient(180deg, var(--accent-l), rgba(241,247,252,.5)); border: 1px solid var(--line); border-radius: 16px; scroll-behavior: smooth; }
-.esi-msg { display: flex; margin-bottom: 12px; }
+.esi-orb { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line2); background: var(--white); color: var(--ink3); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all .15s; font-family: var(--mono); font-size: 8.5px; font-weight: 600; }
+.esi-orb svg { width: 11px; height: 11px; }
+.esi-orb:hover { color: var(--accent); border-color: var(--accent-m); background: var(--accent-l); transform: translateY(-1px); }
+.esi-main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 316px; gap: 14px; }
+.esi-left { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.esi-chat { flex: 1; min-height: 0; overflow-y: auto; padding: 22px; background: linear-gradient(180deg, var(--accent-l) 0%, color-mix(in srgb, var(--accent-l) 55%, transparent) 100%); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--sh-sm); scroll-behavior: smooth; }
+.esi-chat::-webkit-scrollbar { width: 8px; }
+.esi-chat::-webkit-scrollbar-thumb { background: var(--accent-m); border-radius: 8px; }
+.esi-msg { display: flex; margin-bottom: 14px; }
 .esi-msg.user { justify-content: flex-end; }
-.esi-bubble { max-width: 80%; padding: 11px 15px; font-size: 13.5px; white-space: pre-wrap; word-break: break-word; }
-.esi-msg.bot .esi-bubble { background: var(--white); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px; }
-.esi-msg.user .esi-bubble { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 85%, #fff), var(--accent)); color: #fff; border-radius: 14px 4px 14px 14px; }
-.esi-avatar { flex: 0 0 24px; width: 24px; height: 24px; margin-right: 8px; border-radius: 7px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; align-self: flex-start; margin-top: 2px; }
-.esi-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px 32px; }
-.esi-chip { font-size: 11.5px; padding: 5px 12px; border-radius: 18px; border: 1px solid var(--line2); color: var(--ink3); background: var(--white); cursor: pointer; transition: all .12s; font-family: var(--sans); }
-.esi-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-l); }
-.esi-widget { margin: 0 0 14px 32px; max-width: 80%; }
-.esi-card { background: var(--white); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px; padding: 12px 14px; box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 6%, transparent); }
-.esi-card-title { font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); border-bottom: 1px solid var(--off2); padding-bottom: 7px; margin-bottom: 9px; }
-.esi-composer { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; box-shadow: 0 14px 34px color-mix(in srgb, var(--accent) 8%, transparent); }
-.esi-inrow { display: flex; align-items: flex-end; gap: 9px; }
-.esi-input { flex: 1; min-height: 22px; max-height: 140px; resize: none; border: 0; outline: none; font: inherit; font-size: 13.5px; padding: 4px 2px; background: transparent; }
-.esi-send { flex: 0 0 36px; width: 36px; height: 36px; border: 0; border-radius: 11px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 70%, #7fe0ff), var(--accent)); color: #fff; cursor: pointer; font-size: 15px; }
-.esi-foot { display: flex; align-items: center; margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--off2); }
-.esi-powered { margin-left: auto; font-family: var(--mono); font-size: 9.5px; color: var(--ink4); }
-.esi-powered b { color: var(--accent); font-weight: 600; }
-.esi-rail { min-height: 0; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; }
-.esi-panel { min-height: 0; display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: 13px; overflow: hidden; }
-.esi-phead { font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); padding: 9px 12px 8px; border-bottom: 1px solid var(--off2); }
-.esi-pbody { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 10px; }
-.esi-qq { display: block; width: 100%; text-align: left; font: inherit; font-size: 12px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; margin-bottom: 6px; cursor: pointer; transition: all .12s; }
-.esi-qq:hover { border-color: var(--accent-m); background: var(--accent-l); }
-.esi-tool { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font: inherit; font-size: 12px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; cursor: pointer; }
-.esi-tool:hover { border-color: var(--accent-m); background: var(--accent-l); }
+.esi-bubble { max-width: 78%; padding: 12px 16px; font-size: 14px; line-height: 1.65; color: var(--ink2); white-space: pre-wrap; word-break: break-word; }
+.esi-msg.bot .esi-bubble { background: var(--white); border: 1px solid var(--line); border-radius: 4px 16px 16px 16px; box-shadow: var(--sh-sm); }
+.esi-msg.user .esi-bubble { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 72%, #7fe3ff) 0%, var(--accent) 100%); color: #fff; border-radius: 16px 4px 16px 16px; box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 18%, transparent); }
+.esi-avatar { flex: 0 0 26px; width: 26px; height: 26px; margin-right: 10px; border-radius: 8px; background: var(--white); border: 1px solid var(--accent-m); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; font-weight: 600; align-self: flex-start; margin-top: 2px; }
+.esi-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 2px 0 16px 36px; }
+.esi-chip { font-family: var(--mono); font-size: 11px; padding: 5px 13px; border-radius: 20px; border: 1px solid var(--line2); color: var(--ink3); background: var(--white); cursor: pointer; transition: all .12s; }
+.esi-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-l); transform: translateY(-1px); }
+.esi-widget { margin: 2px 0 14px 36px; max-width: 78%; }
+.esi-card { background: var(--white); border: 1px solid var(--line); border-radius: 4px 16px 16px 16px; box-shadow: var(--sh-sm); padding: 12px 14px 13px; }
+.esi-card-title { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase; color: var(--ink3); border-bottom: 1px solid var(--off2); padding-bottom: 8px; margin-bottom: 9px; }
+.esi-composer { flex: 0 0 auto; background: var(--white); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--sh-md); padding: 12px 14px 10px; }
+.esi-composer:focus-within { border-color: var(--accent-m); }
+.esi-inrow { display: flex; align-items: flex-end; gap: 10px; }
+.esi-input { flex: 1; min-height: 24px; max-height: 160px; resize: none; border: 0; outline: none; background: transparent; font-family: var(--sans); font-size: 14px; line-height: 1.6; color: var(--ink); padding: 4px 2px; }
+.esi-input::placeholder { color: var(--ink4); }
+.esi-send { flex: 0 0 38px; width: 38px; height: 38px; border: 0; border-radius: 12px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 30%, #7ff3ff) -52%, var(--accent) 13%, color-mix(in srgb, var(--accent) 45%, #8fe6ff) 91%); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 28%, transparent); transition: all .18s; }
+.esi-send svg { width: 16px; height: 16px; }
+.esi-send:hover { transform: translateY(-1px); box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 36%, transparent); }
+.esi-foot { display: flex; align-items: center; gap: 7px; margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--off2); }
+.esi-mini { font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--off); color: var(--ink3); cursor: pointer; transition: all .12s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+.esi-mini:hover { color: var(--accent); border-color: var(--accent-m); background: var(--accent-l); }
+.esi-ver-wrap { position: relative; margin-left: auto; display: inline-flex; }
+.esi-version { font-family: var(--mono); font-size: 10px; color: var(--ink4); letter-spacing: .05em; display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; padding: 3px 6px; border-radius: 6px; cursor: pointer; transition: all .12s; }
+.esi-version:hover { color: var(--ink2); background: var(--off); }
+.esi-verdot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: esiblink 1.5s infinite; }
+@keyframes esiblink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+.esi-caret { width: 10px; height: 10px; opacity: .7; }
+.esi-ver-backdrop { position: fixed; inset: 0; z-index: 80; }
+.esi-ver-menu { position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 90; min-width: 128px; display: flex; flex-direction: column; gap: 2px; padding: 6px; background: var(--white); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--sh-md); }
+.esi-ver-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 11px; color: var(--ink2); padding: 6px 9px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; text-align: left; }
+.esi-ver-item svg { width: 11px; height: 11px; color: var(--accent); }
+.esi-ver-item:hover { background: var(--accent-l); }
+.esi-ver-item.on { color: var(--accent); font-weight: 600; }
+.esi-ver-item:disabled { color: var(--ink5); cursor: default; }
+.esi-ver-item:disabled:hover { background: transparent; }
+.esi-rail { min-height: 0; display: grid; grid-template-rows: 1fr 1fr; gap: 12px; }
+.esi-panel { min-height: 0; display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--sh-sm); overflow: hidden; }
+.esi-phead { flex: 0 0 auto; display: flex; align-items: center; gap: 7px; padding: 9px 13px 8px; border-bottom: 1px solid var(--off2); font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase; color: var(--ink3); }
+.esi-phead svg { width: 12px; height: 12px; color: var(--accent); flex: 0 0 auto; }
+.esi-pbody { flex: 1; min-height: 0; overflow-y: auto; padding: 9px 11px; }
+.esi-pbody::-webkit-scrollbar { width: 6px; }
+.esi-pbody::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 6px; }
+.esi-qq { display: block; width: 100%; text-align: left; font-family: var(--sans); font-size: 12.5px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 9px; padding: 8px 11px; margin-bottom: 7px; cursor: pointer; transition: all .12s; line-height: 1.45; }
+.esi-qq:hover { border-color: var(--accent-m); background: var(--accent-l); color: var(--ink); transform: translateX(2px); }
+.esi-tool { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font-family: var(--sans); font-size: 12.5px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 9px; padding: 8px 11px; margin-bottom: 7px; cursor: pointer; transition: all .12s; }
+.esi-tool:hover { border-color: var(--accent-m); background: var(--accent-l); transform: translateX(2px); }
 .esi-tool.dis { opacity: .45; cursor: default; }
-.esi-tool-ico { font-size: 14px; }
-.esi-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border: 1px solid var(--off2); background: var(--off); border-radius: 7px; margin-bottom: 5px; font-size: 12px; }
+.esi-tool.dis:hover { border-color: var(--line); background: var(--off); transform: none; }
+.esi-tool-ico { font-size: 13px; width: 18px; text-align: center; }
+.esi-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border: 1px solid var(--off2); background: var(--off); border-radius: 8px; margin-bottom: 6px; font-size: 12px; }
 .esi-meta { font-family: var(--mono); font-size: 10px; color: var(--ink4); }
-.esi-ti { width: 100%; font-family: var(--mono); font-size: 11.5px; background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; outline: none; margin-bottom: 6px; }
-.esi-ta { width: 100%; font-family: var(--mono); font-size: 11px; background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; outline: none; resize: vertical; margin-bottom: 6px; }
-.esi-btn { font: inherit; font-size: 11px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--off); color: var(--ink3); cursor: pointer; margin-right: 5px; }
+.esi-ti { width: 100%; font-family: var(--mono); font-size: 12px; color: var(--ink); background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; outline: none; margin-bottom: 7px; }
+.esi-ti:focus { border-color: var(--accent-m); }
+.esi-ta { width: 100%; font-family: var(--mono); font-size: 11px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; outline: none; resize: vertical; margin-bottom: 7px; }
+.esi-ta:focus { border-color: var(--accent-m); }
+.esi-btn { font-family: var(--sans); font-size: 11px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--off); color: var(--ink3); cursor: pointer; margin-right: 5px; transition: all .12s; }
 .esi-btn:hover { color: var(--accent); border-color: var(--accent-m); }
-.esi-btn.pri { background: var(--accent); color: #fff; border: 0; font-weight: 600; }
-.esi-hash { font-family: var(--mono); font-size: 10px; color: var(--accent-d); word-break: break-all; background: var(--white); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; margin-top: 5px; }
-.esi-grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-.esi-key { font-family: var(--mono); font-size: 12.5px; padding: 8px 0; border: 1px solid var(--line); border-radius: 7px; background: var(--white); cursor: pointer; }
+.esi-btn.pri { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, #6fe0ff), var(--accent)); color: #fff; border: 0; font-weight: 600; box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 22%, transparent); }
+.esi-hash { font-family: var(--mono); font-size: 10px; color: var(--accent-d); word-break: break-all; background: var(--white); border: 1px solid var(--line); border-radius: 7px; padding: 6px 8px; margin-top: 5px; }
+.esi-grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.esi-key { font-family: var(--mono); font-size: 13px; padding: 9px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--white); color: var(--ink2); cursor: pointer; transition: all .1s; }
+.esi-key:hover { border-color: var(--accent-m); background: var(--accent-l); transform: translateY(-1px); }
 .esi-key.op { background: var(--off); color: var(--accent-d); }
-.esi-key.eq { grid-column: span 2; background: var(--accent); color: #fff; border: 0; font-weight: 700; }
+.esi-key.eq { grid-column: span 2; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, #6fe0ff), var(--accent)); color: #fff; border: 0; font-weight: 700; }
 .esi-linkcard { display: flex; gap: 10px; align-items: center; }
 .esi-linkcard img { width: 22px; height: 22px; }
 .esi-lc-body { flex: 1; min-width: 0; }
-.esi-lc-t { font-size: 12.5px; font-weight: 600; }
-.esi-lc-d { font-size: 11px; color: var(--ink3); }
-.esi-lc-q { font-family: var(--mono); font-size: 10px; color: var(--accent-d); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.esi-open { flex: 0 0 auto; font: inherit; font-size: 11.5px; font-weight: 600; color: #fff; background: var(--accent); border: 0; border-radius: 9px; padding: 8px 12px; cursor: pointer; }
-.esi-dark { --bg: #0b1322; --white: #111a2c; --off: #0d1524; --off2: #1c2740; --line: #223353; --line2: #2e4468; --ink: #e9f1fc; --ink2: #d2deee; --ink3: #94a6c2; --ink4: #687a9b; --accent-l: #11233b; --accent-m: #1e4b75; }
-@media (max-width: 860px) { .esi-main { grid-template-columns: 1fr; } .esi-rail { grid-template-rows: none; grid-template-columns: 1fr 1fr; } .esi-app { height: auto; } .esi-chat { min-height: 380px; } }
-@media (max-width: 560px) { .esi-rail { grid-template-columns: 1fr; } }
+.esi-lc-d { font-size: 11.5px; color: var(--ink3); line-height: 1.5; }
+.esi-lc-q { font-family: var(--mono); font-size: 10px; color: var(--accent-d); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+.esi-open { flex: 0 0 auto; font-family: var(--sans); font-size: 11.5px; font-weight: 600; color: #fff; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, #6fe0ff), var(--accent)); border: 0; border-radius: 9px; padding: 8px 13px; cursor: pointer; box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 22%, transparent); }
+.esi-dark { --bg: #0b1322; --white: #111a2c; --off: #0d1524; --off2: #1c2740; --line: #223353; --line2: #2e4468; --ink: #e9f1fc; --ink2: #d2deee; --ink3: #94a6c2; --ink4: #687a9b; --ink5: #495b78; --accent-l: #11233b; --accent-m: #1e4b75; --stone: #16283f; }
+.esi-dark .esi-header { background: rgba(13,21,37,.92); }
+.esi-dark .esi-chat { background: linear-gradient(180deg, #0f1c31 0%, rgba(12,20,35,.72) 100%); }
+@media (max-width: 860px) { .esi-app { height: auto; } .esi-main { grid-template-columns: 1fr; } .esi-chat { min-height: 420px; } .esi-rail { grid-template-rows: none; grid-template-columns: 1fr 1fr; } .esi-panel { min-height: 220px; max-height: 320px; } }
+@media (max-width: 560px) { .esi-app { padding: 10px 14px 18px; } .esi-rail { grid-template-columns: 1fr; } .esi-bubble { max-width: 90%; } .esi-widget { max-width: 94%; margin-left: 12px; } }
 </style>
 </head>
 <body>
 <div class="esi-app" id="app"></div>
-<script type="application/json" id="esi-pack">{"brand": {"name": "Sunny Dental Clinic", "tagline": {"en": "Gentle care, transparent prices", "zh": "温柔诊疗 · 透明定价"}, "accent": "#0D9AFF", "langs": ["en", "zh"], "welcome": {"en": "Hi! I am the Sunny Dental assistant — ask me about visits, prices, treatments or aftercare. How can I help?", "zh": "你好！我是 Sunny 齿科助手——预约、价格、治疗、术后护理都可以问我。需要什么帮助？"}, "anchor": {"label": {"en": "Book now ↗", "zh": "立即预约 ↗"}, "action": "link", "target": "https://booking.sunnydental.example.com"}}, "faq": [{"id": "opening-hours", "q": {"en": "What are your opening hours?", "zh": "营业时间是什么？"}, "a": {"en": "We are open Monday to Saturday, 9:00–19:00, and closed on Sundays and public holidays. Emergency line answers 24/7.", "zh": "周一至周六 9:00–19:00，周日及法定节假日休息。急诊电话 24 小时接听。"}, "keywords": ["open", "hour", "业时", "间是", "营业", "时间"], "children": ["emergency", "braces"]}, {"id": "book-visit", "q": {"en": "How do I book an appointment?", "zh": "怎么预约？"}, "a": {"en": "Three ways: tap Book now, call our front desk, or walk in — booked patients are always seen first.", "zh": "三种方式：点击立即预约、致电前台、或直接到店——预约患者优先接诊。"}, "keywords": ["appointment", "book", "么预", "预约", "appoin"], "children": ["wisdom", "parking"]}, {"id": "first-visit", "q": {"en": "What happens at my first visit?", "zh": "第一次来会做什么？"}, "a": {"en": "A 30-minute session: medical history, full oral examination, digital X-ray if needed, and a written treatment plan with transparent pricing. No treatment starts without your consent.", "zh": "约 30 分钟：病史采集、全口检查、必要时数字化拍片，并给出带透明报价的书面治疗方案。未经您同意不会开始任何治疗。"}, "keywords": ["happen", "first", "visit", "做什", "次来", "第一"], "children": ["cost-implant", "kids"]}, {"id": "cost-cleaning", "q": {"en": "How much does teeth cleaning cost?", "zh": "洗牙多少钱？"}, "a": {"en": "Standard ultrasonic cleaning with polishing is a flat listed price — see the price board or ask the desk; members get 20% off twice a year.", "zh": "标准超声洁牙含抛光为明码标价——见价目表或询问前台；会员每年两次享 8 折。"}, "keywords": ["clean", "cost", "洗牙", "much", "少钱", "多少"], "children": ["checkup-freq", "cost-implant"]}, {"id": "cost-implant", "q": {"en": "How much is a dental implant?", "zh": "种植牙多少钱？"}, "a": {"en": "Implant cost depends on the system and bone condition; a written quote comes with your X-ray consult. Installment plans are available.", "zh": "种植费用取决于植体系统与骨条件；拍片面诊后出具书面报价，支持分期。"}, "keywords": ["implant", "植牙", "种植", "much", "少钱", "多少"], "children": ["first-visit", "cost-cleaning"]}, {"id": "insurance", "q": {"en": "Do you accept insurance?", "zh": "支持医保/保险吗？"}, "a": {"en": "We accept major private dental insurance and process claims at the desk; bring your card. Public insurance covers basic items per local policy.", "zh": "支持主流商业齿科保险，前台可直接理赔，请携带保险卡。基础项目按当地政策使用医保。"}, "keywords": ["insuranc", "accept", "持医", "险吗", "医保", "保险", "insura"], "children": ["cancel", "cost-cleaning"]}, {"id": "pain", "q": {"en": "Will the treatment hurt?", "zh": "治疗会疼吗？"}, "a": {"en": "Modern anesthesia makes most procedures painless; we explain sensations beforehand and you can pause any time with a hand signal.", "zh": "现代麻醉下绝大多数操作无痛；治疗前会说明体感，过程中举手即可随时暂停。"}, "keywords": ["treatment", "hurt", "会疼", "治疗", "疗会", "疼吗", "treatm"], "children": ["first-visit", "kids"]}, {"id": "kids", "q": {"en": "Do you treat children?", "zh": "看儿童牙科吗？"}, "a": {"en": "Yes — pediatric dentistry every day, with a kids corner and gentle-first visits designed to build trust before treatment.", "zh": "看——儿童齿科每日开诊，设儿童角，首诊以建立信任为先。"}, "keywords": ["children", "treat", "童牙", "科吗", "看儿", "儿童", "childr"], "children": ["first-visit", "checkup-freq"]}, {"id": "emergency", "q": {"en": "What if I have a dental emergency?", "zh": "牙齿急症怎么办？"}, "a": {"en": "Call the 24/7 emergency line immediately. Knocked-out tooth: keep it in milk and come within 30 minutes for the best chance of saving it.", "zh": "立即拨打 24 小时急诊电话。牙齿脱落：泡在牛奶中，30 分钟内赶到，保牙成功率最高。"}, "keywords": ["emergency", "症怎", "齿急", "急症", "dental", "牙齿", "emerge"], "children": ["opening-hours", "cavity"]}, {"id": "whitening", "q": {"en": "Do you offer teeth whitening?", "zh": "有牙齿美白吗？"}, "a": {"en": "In-clinic cold-light whitening (about 60 minutes) and take-home tray kits; a quick exam first confirms which suits your enamel.", "zh": "有冷光美白（约 60 分钟）与家用牙托套装；先做快速检查确认适合的方案。"}, "keywords": ["whiten", "offer", "白吗", "齿美", "美白", "有牙"], "children": ["night-grind", "first-visit"]}, {"id": "braces", "q": {"en": "Do you do braces or aligners?", "zh": "做正畸/隐形牙套吗？"}, "a": {"en": "Both traditional braces and clear aligners. Free initial orthodontic consult each Saturday; scans and simulation before you decide.", "zh": "传统托槽与隐形矫治都做。每周六正畸初诊免费；决定前先扫描并模拟效果。"}, "keywords": ["aligner", "brac", "牙套", "套吗", "正畸", "形牙"], "children": ["kids", "cost-implant"]}, {"id": "root-canal", "q": {"en": "Is a root canal really necessary?", "zh": "一定要做根管吗？"}, "a": {"en": "Only when the pulp is infected — we show you the X-ray and explain alternatives; untreated infection risks losing the tooth.", "zh": "仅在牙髓感染时需要——我们会展示片子并说明替代方案；拖延感染可能导致失牙。"}, "keywords": ["necessary", "really", "canal", "root", "做根", "管吗", "necess"], "children": ["covid", "pain"]}, {"id": "extraction", "q": {"en": "Does tooth extraction take long?", "zh": "拔牙要多久？"}, "a": {"en": "Simple extractions take 10–20 minutes; impacted wisdom teeth 30–60 with a surgeon. Aftercare sheet and review call included.", "zh": "简单拔牙 10–20 分钟；阻生智齿 30–60 分钟由外科医师处理。附术后护理单与随访电话。"}, "keywords": ["extraction", "tooth", "long", "牙要", "要多", "拔牙", "extrac"], "children": ["wisdom", "root-canal"]}, {"id": "wisdom", "q": {"en": "Should wisdom teeth be removed?", "zh": "智齿要不要拔？"}, "a": {"en": "Not always — we assess pain, position and cleaning access on X-ray. Symptom-free, well-positioned wisdom teeth can stay.", "zh": "不一定——按疼痛、位置与清洁可达性评估拍片。无症状且位置好的智齿可以保留。"}, "keywords": ["wisdom", "remov", "齿要", "要拔", "智齿", "不要"], "children": ["extraction", "veneer"]}, {"id": "cavity", "q": {"en": "How do I know if I have a cavity?", "zh": "怎么知道有没有蛀牙？"}, "a": {"en": "Sensitivity to sweet or cold, dark pits, or food trapping are signs; a checkup with X-ray settles it in minutes.", "zh": "对甜/冷敏感、黑点、塞牙是信号；门诊检查加拍片几分钟即可确认。"}, "keywords": ["cavity", "蛀牙", "么知", "有没", "道有", "知道"], "children": ["emergency", "sensitive"]}, {"id": "gum-bleed", "q": {"en": "My gums bleed when brushing — serious?", "zh": "刷牙出血严重吗？"}, "a": {"en": "Usually early gum inflammation, very treatable with a professional clean and technique fix; persistent bleeding deserves a periodontal check.", "zh": "多为早期牙龈炎，洗牙加刷牙方法矫正即可改善；持续出血建议做牙周检查。"}, "keywords": ["seriou", "brush", "gum", "刷牙", "牙出", "出血"], "children": ["sensitive", "first-visit"]}, {"id": "sensitive", "q": {"en": "Why are my teeth sensitive?", "zh": "牙齿为什么敏感？"}, "a": {"en": "Worn enamel, gum recession or grinding. Desensitizing treatment plus habit fixes usually calm it within weeks.", "zh": "多因釉质磨损、牙龈退缩或磨牙。脱敏治疗加习惯调整通常数周见效。"}, "keywords": ["sensitiv", "敏感", "为什", "么敏", "齿为", "牙齿", "sensit"], "children": ["gum-bleed", "first-visit"]}, {"id": "bad-breath", "q": {"en": "How can I fix bad breath?", "zh": "口气重怎么办？"}, "a": {"en": "Most cases trace to tongue coating, gum disease, or dry mouth — a cleaning plus targeted routine solves the majority.", "zh": "多与舌苔、牙周或口干有关——洁牙加针对性护理可解决大多数情况。"}, "keywords": ["breath", "fix", "bad", "气重", "重怎", "口气"], "children": ["checkup-freq", "cost-cleaning"]}, {"id": "checkup-freq", "q": {"en": "How often should I get a checkup?", "zh": "多久检查一次牙？"}, "a": {"en": "Every 6 months for most adults; every 3–4 months if you have gum disease or braces. Kids: twice a year from the first tooth.", "zh": "多数成人每 6 个月一次；牙周病或正畸期 3–4 个月。儿童自长第一颗牙起每年两次。"}, "keywords": ["checkup", "often", "次牙", "检查", "久检", "查一"], "children": ["bad-breath", "kids"]}, {"id": "payment", "q": {"en": "What payment methods do you take?", "zh": "支持哪些支付方式？"}, "a": {"en": "Cards, mobile pay, cash, and installments for treatments over the plan threshold. Invoices issued on request.", "zh": "银行卡、移动支付、现金；大额治疗支持分期。可开具发票。"}, "keywords": ["payment", "method", "些支", "支付", "付方", "持哪"], "children": ["cost-implant", "first-visit"]}, {"id": "parking", "q": {"en": "Is parking available?", "zh": "有停车位吗？"}, "a": {"en": "Free patient parking behind the building (2 hours); street parking and a transit stop are one block away.", "zh": "楼后有患者免费停车（2 小时）；街边车位与公交站一个路口即到。"}, "keywords": ["availabl", "park", "停车", "车位", "位吗", "有停", "availa"], "children": ["cost-implant", "kids"]}, {"id": "covid", "q": {"en": "What hygiene standards do you follow?", "zh": "消毒防护标准如何？"}, "a": {"en": "Instrument sterilization is autoclave-tracked per patient, surfaces disinfected between visits, and single-use items never reused.", "zh": "器械按患者独立高温高压灭菌并留档，诊间逐客消毒，一次性用品绝不复用。"}, "keywords": ["standard", "follow", "hygien", "标准", "防护", "如何", "standa"], "children": ["root-canal", "kids"]}, {"id": "records", "q": {"en": "Can I get my dental records or X-rays?", "zh": "能拿到病历和片子吗？"}, "a": {"en": "Yes — your records belong to you. Ask the desk for digital copies; transfers to another clinic are free.", "zh": "可以——病历属于您本人。前台可导出电子版；转诊至其他机构免费提供。"}, "keywords": ["record", "ray", "能拿", "拿到", "和片", "历和"], "children": ["cost-cleaning", "kids"]}, {"id": "cancel", "q": {"en": "What is your cancellation policy?", "zh": "取消预约有什么规定？"}, "a": {"en": "Free cancellation up to 24 hours ahead; late cancellations may incur a small fee since the slot is reserved for you.", "zh": "提前 24 小时取消免费；临时取消可能收取少量占位费。"}, "keywords": ["cancellation", "policy", "约有", "么规", "消预", "规定", "cancel"], "children": ["insurance", "wisdom"]}, {"id": "night-grind", "q": {"en": "I grind my teeth at night — what helps?", "zh": "夜磨牙怎么办？"}, "a": {"en": "A custom night guard protects enamel immediately; we also screen for stress and bite alignment factors.", "zh": "定制夜磨牙垫可立即保护牙齿；同时评估压力与咬合因素。"}, "keywords": ["night", "grind", "help", "夜磨", "牙怎", "磨牙"], "children": ["whitening", "sensitive"]}, {"id": "veneer", "q": {"en": "What are veneers and do I need them?", "zh": "贴面是什么？适合我吗？"}, "a": {"en": "Thin porcelain shells for shape and color fixes on front teeth — great for chips and stains, decided after a smile assessment.", "zh": "修复前牙形态与颜色的薄瓷片——适合缺角与染色，经微笑评估后决定。"}, "keywords": ["veneer", "them", "我吗", "合我", "面是", "适合"], "children": ["wisdom", "first-visit"]}], "quick": ["opening-hours", "book-visit", "first-visit", "cost-cleaning", "cost-implant", "insurance", "pain", "kids", "emergency", "whitening"], "vocab": {"synonymsStemmed": {"tooth": ["teeth", "dental"], "cost": ["pric", "fe", "charg"], "hurt": ["pain", "painful"], "appointment": ["book", "book", "schedul", "visit"], "clean": ["scal", "scal"], "whiten": ["bleach", "whiten"], "brac": ["aligner", "orthodontic", "invisalign"], "kid": ["child", "children", "pediatric"], "xray": ["x-ray", "radiograph", "scan"], "knock": ["emergency", "knocked-out"]}, "zhTerms": [["洗牙", "cleaning scaling"], ["种植牙?", "implant"], ["正畸|牙套", "braces aligner"], ["拔牙", "extraction"], ["智齿", "wisdom tooth"], ["蛀牙|龋齿", "cavity"], ["牙龈", "gum"], ["美白", "whitening"], ["根管", "root canal"], ["预约|挂号", "appointment book"], ["价格|费用|多少钱", "cost price"], ["急诊|急症", "emergency"], ["儿童|小孩", "kids children"], ["医保|保险", "insurance"], ["敏感", "sensitive"], ["口气|口臭", "bad breath"], ["磨牙", "grind"], ["贴面", "veneer"], ["停车", "parking"], ["消毒", "hygiene sterilization"], ["病历|片子", "records x-ray"], ["取消", "cancel"], ["分期|支付", "payment installment"], ["牙疼|牙痛|疼|痛", "pain hurt emergency"], ["紧急|马上|立刻", "emergency"], ["出血", "bleed gums"], ["收费|费", "fee cost"]], "smalltalkExtra": ["谢谢医生", "医生辛苦了"]}, "flow": null, "toolbox": ["calculator", "json", "timestamp", "units", "textstats", "aeo"]}</script>
+<script type="application/json" id="esi-pack">{"brand": {"name": "Sunny Dental Clinic", "tagline": {"en": "Gentle care, transparent prices", "zh": "温柔诊疗 · 透明定价"}, "accent": "#0D9AFF", "langs": ["en", "zh"], "welcome": {"en": "Hi! I am the Sunny Dental assistant — ask me about visits, prices, treatments or aftercare. How can I help?", "zh": "你好！我是 Sunny 齿科助手——预约、价格、治疗、术后护理都可以问我。需要什么帮助？"}, "anchor": {"label": {"en": "Book now ↗", "zh": "立即预约 ↗"}, "action": "link", "target": "https://booking.sunnydental.example.com"}}, "faq": [{"id": "opening-hours", "q": {"en": "What are your opening hours?", "zh": "营业时间是什么？"}, "a": {"en": "We are open Monday to Saturday, 9:00–19:00, and closed on Sundays and public holidays. Emergency line answers 24/7.", "zh": "周一至周六 9:00–19:00，周日及法定节假日休息。急诊电话 24 小时接听。"}, "keywords": ["open", "hour", "时间", "营业", "业时", "间是"], "children": ["emergency", "braces"]}, {"id": "book-visit", "q": {"en": "How do I book an appointment?", "zh": "怎么预约？"}, "a": {"en": "Three ways: tap Book now, call our front desk, or walk in — booked patients are always seen first.", "zh": "三种方式：点击立即预约、致电前台、或直接到店——预约患者优先接诊。"}, "keywords": ["appointment", "book", "么预", "预约", "appoin"], "children": ["wisdom", "parking"]}, {"id": "first-visit", "q": {"en": "What happens at my first visit?", "zh": "第一次来会做什么？"}, "a": {"en": "A 30-minute session: medical history, full oral examination, digital X-ray if needed, and a written treatment plan with transparent pricing. No treatment starts without your consent.", "zh": "约 30 分钟：病史采集、全口检查、必要时数字化拍片，并给出带透明报价的书面治疗方案。未经您同意不会开始任何治疗。"}, "keywords": ["happen", "first", "visit", "次来", "来会", "会做"], "children": ["cost-implant", "kids"]}, {"id": "cost-cleaning", "q": {"en": "How much does teeth cleaning cost?", "zh": "洗牙多少钱？"}, "a": {"en": "Standard ultrasonic cleaning with polishing is a flat listed price — see the price board or ask the desk; members get 20% off twice a year.", "zh": "标准超声洁牙含抛光为明码标价——见价目表或询问前台；会员每年两次享 8 折。"}, "keywords": ["clean", "cost", "洗牙", "much", "多少", "少钱"], "children": ["checkup-freq", "cost-implant"]}, {"id": "cost-implant", "q": {"en": "How much is a dental implant?", "zh": "种植牙多少钱？"}, "a": {"en": "Implant cost depends on the system and bone condition; a written quote comes with your X-ray consult. Installment plans are available.", "zh": "种植费用取决于植体系统与骨条件；拍片面诊后出具书面报价，支持分期。"}, "keywords": ["implant", "植牙", "种植", "much", "多少", "少钱"], "children": ["first-visit", "cost-cleaning"]}, {"id": "insurance", "q": {"en": "Do you accept insurance?", "zh": "支持医保/保险吗？"}, "a": {"en": "We accept major private dental insurance and process claims at the desk; bring your card. Public insurance covers basic items per local policy.", "zh": "支持主流商业齿科保险，前台可直接理赔，请携带保险卡。基础项目按当地政策使用医保。"}, "keywords": ["insuranc", "accept", "险吗", "医保", "持医", "保险", "insura"], "children": ["cancel", "cost-cleaning"]}, {"id": "pain", "q": {"en": "Will the treatment hurt?", "zh": "治疗会疼吗？"}, "a": {"en": "Modern anesthesia makes most procedures painless; we explain sensations beforehand and you can pause any time with a hand signal.", "zh": "现代麻醉下绝大多数操作无痛；治疗前会说明体感，过程中举手即可随时暂停。"}, "keywords": ["treatment", "hurt", "疗会", "治疗", "疼吗", "会疼", "treatm"], "children": ["first-visit", "kids"]}, {"id": "kids", "q": {"en": "Do you treat children?", "zh": "看儿童牙科吗？"}, "a": {"en": "Yes — pediatric dentistry every day, with a kids corner and gentle-first visits designed to build trust before treatment.", "zh": "看——儿童齿科每日开诊，设儿童角，首诊以建立信任为先。"}, "keywords": ["children", "treat", "科吗", "童牙", "牙科", "儿童", "childr"], "children": ["first-visit", "checkup-freq"]}, {"id": "emergency", "q": {"en": "What if I have a dental emergency?", "zh": "牙齿急症怎么办？"}, "a": {"en": "Call the 24/7 emergency line immediately. Knocked-out tooth: keep it in milk and come within 30 minutes for the best chance of saving it.", "zh": "立即拨打 24 小时急诊电话。牙齿脱落：泡在牛奶中，30 分钟内赶到，保牙成功率最高。"}, "keywords": ["emergency", "齿急", "症怎", "急症", "dental", "牙齿", "emerge"], "children": ["opening-hours", "cavity"]}, {"id": "whitening", "q": {"en": "Do you offer teeth whitening?", "zh": "有牙齿美白吗？"}, "a": {"en": "In-clinic cold-light whitening (about 60 minutes) and take-home tray kits; a quick exam first confirms which suits your enamel.", "zh": "有冷光美白（约 60 分钟）与家用牙托套装；先做快速检查确认适合的方案。"}, "keywords": ["whiten", "offer", "有牙", "齿美", "美白", "白吗"], "children": ["night-grind", "first-visit"]}, {"id": "braces", "q": {"en": "Do you do braces or aligners?", "zh": "做正畸/隐形牙套吗？"}, "a": {"en": "Both traditional braces and clear aligners. Free initial orthodontic consult each Saturday; scans and simulation before you decide.", "zh": "传统托槽与隐形矫治都做。每周六正畸初诊免费；决定前先扫描并模拟效果。"}, "keywords": ["aligner", "brac", "正畸", "形牙", "套吗", "牙套"], "children": ["kids", "cost-implant"]}, {"id": "root-canal", "q": {"en": "Is a root canal really necessary?", "zh": "一定要做根管吗？"}, "a": {"en": "Only when the pulp is infected — we show you the X-ray and explain alternatives; untreated infection risks losing the tooth.", "zh": "仅在牙髓感染时需要——我们会展示片子并说明替代方案；拖延感染可能导致失牙。"}, "keywords": ["necessary", "really", "canal", "root", "管吗", "要做", "necess"], "children": ["covid", "pain"]}, {"id": "extraction", "q": {"en": "Does tooth extraction take long?", "zh": "拔牙要多久？"}, "a": {"en": "Simple extractions take 10–20 minutes; impacted wisdom teeth 30–60 with a surgeon. Aftercare sheet and review call included.", "zh": "简单拔牙 10–20 分钟；阻生智齿 30–60 分钟由外科医师处理。附术后护理单与随访电话。"}, "keywords": ["extraction", "tooth", "long", "拔牙", "牙要", "要多", "extrac"], "children": ["wisdom", "root-canal"]}, {"id": "wisdom", "q": {"en": "Should wisdom teeth be removed?", "zh": "智齿要不要拔？"}, "a": {"en": "Not always — we assess pain, position and cleaning access on X-ray. Symptom-free, well-positioned wisdom teeth can stay.", "zh": "不一定——按疼痛、位置与清洁可达性评估拍片。无症状且位置好的智齿可以保留。"}, "keywords": ["wisdom", "remov", "不要", "要拔", "齿要", "智齿"], "children": ["extraction", "veneer"]}, {"id": "cavity", "q": {"en": "How do I know if I have a cavity?", "zh": "怎么知道有没有蛀牙？"}, "a": {"en": "Sensitivity to sweet or cold, dark pits, or food trapping are signs; a checkup with X-ray settles it in minutes.", "zh": "对甜/冷敏感、黑点、塞牙是信号；门诊检查加拍片几分钟即可确认。"}, "keywords": ["cavity", "知道", "有蛀", "蛀牙", "道有", "没有"], "children": ["emergency", "sensitive"]}, {"id": "gum-bleed", "q": {"en": "My gums bleed when brushing — serious?", "zh": "刷牙出血严重吗？"}, "a": {"en": "Usually early gum inflammation, very treatable with a professional clean and technique fix; persistent bleeding deserves a periodontal check.", "zh": "多为早期牙龈炎，洗牙加刷牙方法矫正即可改善；持续出血建议做牙周检查。"}, "keywords": ["seriou", "brush", "gum", "血严", "严重", "牙出"], "children": ["sensitive", "first-visit"]}, {"id": "sensitive", "q": {"en": "Why are my teeth sensitive?", "zh": "牙齿为什么敏感？"}, "a": {"en": "Worn enamel, gum recession or grinding. Desensitizing treatment plus habit fixes usually calm it within weeks.", "zh": "多因釉质磨损、牙龈退缩或磨牙。脱敏治疗加习惯调整通常数周见效。"}, "keywords": ["sensitiv", "为什", "齿为", "敏感", "么敏", "牙齿", "sensit"], "children": ["gum-bleed", "first-visit"]}, {"id": "bad-breath", "q": {"en": "How can I fix bad breath?", "zh": "口气重怎么办？"}, "a": {"en": "Most cases trace to tongue coating, gum disease, or dry mouth — a cleaning plus targeted routine solves the majority.", "zh": "多与舌苔、牙周或口干有关——洁牙加针对性护理可解决大多数情况。"}, "keywords": ["breath", "fix", "bad", "口气", "重怎", "气重"], "children": ["checkup-freq", "cost-cleaning"]}, {"id": "checkup-freq", "q": {"en": "How often should I get a checkup?", "zh": "多久检查一次牙？"}, "a": {"en": "Every 6 months for most adults; every 3–4 months if you have gum disease or braces. Kids: twice a year from the first tooth.", "zh": "多数成人每 6 个月一次；牙周病或正畸期 3–4 个月。儿童自长第一颗牙起每年两次。"}, "keywords": ["checkup", "often", "次牙", "查一", "检查", "久检"], "children": ["bad-breath", "kids"]}, {"id": "payment", "q": {"en": "What payment methods do you take?", "zh": "支持哪些支付方式？"}, "a": {"en": "Cards, mobile pay, cash, and installments for treatments over the plan threshold. Invoices issued on request.", "zh": "银行卡、移动支付、现金；大额治疗支持分期。可开具发票。"}, "keywords": ["payment", "method", "哪些", "些支", "支付", "方式"], "children": ["cost-implant", "first-visit"]}, {"id": "parking", "q": {"en": "Is parking available?", "zh": "有停车位吗？"}, "a": {"en": "Free patient parking behind the building (2 hours); street parking and a transit stop are one block away.", "zh": "楼后有患者免费停车（2 小时）；街边车位与公交站一个路口即到。"}, "keywords": ["availabl", "park", "停车", "车位", "有停", "位吗", "availa"], "children": ["cost-implant", "kids"]}, {"id": "covid", "q": {"en": "What hygiene standards do you follow?", "zh": "消毒防护标准如何？"}, "a": {"en": "Instrument sterilization is autoclave-tracked per patient, surfaces disinfected between visits, and single-use items never reused.", "zh": "器械按患者独立高温高压灭菌并留档，诊间逐客消毒，一次性用品绝不复用。"}, "keywords": ["standard", "follow", "hygien", "消毒", "毒防", "如何", "standa"], "children": ["root-canal", "kids"]}, {"id": "records", "q": {"en": "Can I get my dental records or X-rays?", "zh": "能拿到病历和片子吗？"}, "a": {"en": "Yes — your records belong to you. Ask the desk for digital copies; transfers to another clinic are free.", "zh": "可以——病历属于您本人。前台可导出电子版；转诊至其他机构免费提供。"}, "keywords": ["record", "ray", "拿到", "子吗", "能拿", "历和"], "children": ["cost-cleaning", "kids"]}, {"id": "cancel", "q": {"en": "What is your cancellation policy?", "zh": "取消预约有什么规定？"}, "a": {"en": "Free cancellation up to 24 hours ahead; late cancellations may incur a small fee since the slot is reserved for you.", "zh": "提前 24 小时取消免费；临时取消可能收取少量占位费。"}, "keywords": ["cancellation", "policy", "规定", "么规", "取消", "约有", "cancel"], "children": ["insurance", "wisdom"]}, {"id": "night-grind", "q": {"en": "I grind my teeth at night — what helps?", "zh": "夜磨牙怎么办？"}, "a": {"en": "A custom night guard protects enamel immediately; we also screen for stress and bite alignment factors.", "zh": "定制夜磨牙垫可立即保护牙齿；同时评估压力与咬合因素。"}, "keywords": ["night", "grind", "help", "牙怎", "磨牙", "夜磨"], "children": ["whitening", "sensitive"]}, {"id": "veneer", "q": {"en": "What are veneers and do I need them?", "zh": "贴面是什么？适合我吗？"}, "a": {"en": "Thin porcelain shells for shape and color fixes on front teeth — great for chips and stains, decided after a smile assessment.", "zh": "修复前牙形态与颜色的薄瓷片——适合缺角与染色，经微笑评估后决定。"}, "keywords": ["veneer", "them", "面是", "适合", "合我", "贴面"], "children": ["wisdom", "first-visit"]}], "quick": ["opening-hours", "book-visit", "first-visit", "cost-cleaning", "cost-implant", "insurance", "pain", "kids", "emergency", "whitening"], "vocab": {"synonymsStemmed": {"tooth": ["teeth", "dental"], "cost": ["pric", "fe", "charg"], "hurt": ["pain", "painful"], "appointment": ["book", "book", "schedul", "visit"], "clean": ["scal", "scal"], "whiten": ["bleach", "whiten"], "brac": ["aligner", "orthodontic", "invisalign"], "kid": ["child", "children", "pediatric"], "xray": ["x-ray", "radiograph", "scan"], "knock": ["emergency", "knocked-out"]}, "zhTerms": [["洗牙", "cleaning scaling"], ["种植牙?", "implant"], ["正畸|牙套", "braces aligner"], ["拔牙", "extraction"], ["智齿", "wisdom tooth"], ["蛀牙|龋齿", "cavity"], ["牙龈", "gum"], ["美白", "whitening"], ["根管", "root canal"], ["预约|挂号", "appointment book"], ["价格|费用|多少钱", "cost price"], ["急诊|急症", "emergency"], ["儿童|小孩", "kids children"], ["医保|保险", "insurance"], ["敏感", "sensitive"], ["口气|口臭", "bad breath"], ["磨牙", "grind"], ["贴面", "veneer"], ["停车", "parking"], ["消毒", "hygiene sterilization"], ["病历|片子", "records x-ray"], ["取消", "cancel"], ["分期|支付", "payment installment"], ["牙疼|牙痛|疼|痛", "pain hurt emergency"], ["紧急|马上|立刻", "emergency"], ["出血", "bleed gums"], ["收费|费", "fee cost"]], "smalltalkExtra": ["谢谢医生", "医生辛苦了"]}, "flow": null, "toolbox": ["calculator", "json", "timestamp", "units", "textstats", "aeo"]}</script>
 <script>
 /* ══════════════ Eureka Static Intelligence · Engine (vanilla, no deps) ══════════════ */
 /* ENGINE_START */
@@ -241,6 +276,17 @@ const T = {
         toolCalc: '计算器', toolJson: 'JSON 校验', toolTs: '时间戳', toolUnits: '单位换算', toolStats: '文本统计 + SHA-256', toolImg: '图像工具（预留）',
         calcTip: '小技巧：直接在对话框敲算式也行。', jsonBtn: '校验并美化', statsBtn: '计算 SHA-256', now: '当前' },
 };
+const SVG = {
+  spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>',
+  q: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+  flow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h7"/></svg>',
+  caret: '<svg class="esi-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+};
 const $ = (s2, el) => (el || document).querySelector(s2);
 const app = $('#app');
 function h(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
@@ -249,48 +295,84 @@ const esc = (s2) => String(s2).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt
 function build() {
   const B = PACK.brand;
   app.innerHTML = '';
+  // ── header: FinChip banner style ──
   const head = h('div', 'esi-header');
-  head.append(h('div', 'esi-brand', esc(B.name)));
-  if (B.tagline) head.append(h('div', 'esi-tagline', esc(B.tagline[LOC] || B.tagline.en || '')));
+  head.insertAdjacentHTML('beforeend', SVG.spark);
+  head.append(h('span', 'esi-brand', esc(B.name)));
+  head.append(h('span', 'esi-tag', esc(B.tag || 'Beta')));
+  if (B.tagline) head.append(h('span', 'esi-tagline', esc(B.tagline[LOC] || B.tagline.en || '')));
   head.append(h('div', 'esi-spacer'));
-  const rBtn = h('button', 'esi-orb', '↻'); rBtn.title = T[LOC].reset; rBtn.onclick = reset; head.append(rBtn);
-  const dBtn = h('button', 'esi-orb', '☾'); dBtn.onclick = () => document.body.classList.toggle('esi-dark'); head.append(dBtn);
-  if (LANGS.length > 1) { const lBtn = h('button', 'esi-orb', '文'); lBtn.onclick = () => { LOC = LOC === LANGS[0] ? LANGS[1] : LANGS[0]; build(); botSay(PACK.brand.welcome[LOC] || PACK.brand.welcome.en, welcomeChips()); }; head.append(lBtn); }
+  const rBtn = h('button', 'esi-orb', SVG.refresh); rBtn.title = T[LOC].reset; rBtn.onclick = reset; head.append(rBtn);
+  const dBtn = h('button', 'esi-orb', document.body.classList.contains('esi-dark') ? SVG.moon : SVG.sun);
+  dBtn.onclick = () => { document.body.classList.toggle('esi-dark'); dBtn.innerHTML = document.body.classList.contains('esi-dark') ? SVG.moon : SVG.sun; };
+  head.append(dBtn);
+  if (LANGS.length > 1) {
+    const lBtn = h('button', 'esi-orb', LOC === 'zh' ? 'Zh' : 'En');
+    lBtn.title = 'En / Zh';
+    lBtn.onclick = () => { LOC = LOC === LANGS[0] ? LANGS[1] : LANGS[0]; build(); botSay(PACK.brand.welcome[LOC] || PACK.brand.welcome.en, welcomeChips()); };
+    head.append(lBtn);
+  }
   app.append(head);
 
   const main = h('div', 'esi-main');
   const left = h('div', 'esi-left');
-  left.append(h('div', 'esi-chat')); left.querySelector('.esi-chat').id = 'chat';
+  const chatEl = h('div', 'esi-chat'); chatEl.id = 'chat'; left.append(chatEl);
+  // ── composer ──
   const comp = h('div', 'esi-composer');
   const row = h('div', 'esi-inrow');
   const ta = h('textarea', 'esi-input'); ta.id = 'input'; ta.rows = 1; ta.placeholder = T[LOC].placeholder;
   ta.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
-  ta.oninput = () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 140) + 'px'; };
-  const sb = h('button', 'esi-send', '➤'); sb.onclick = send;
+  ta.oninput = () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 160) + 'px'; };
+  const sb = h('button', 'esi-send', SVG.send); sb.onclick = send;
   row.append(ta, sb); comp.append(row);
+  // foot: three default quick minis + version dropdown
   const foot = h('div', 'esi-foot');
-  foot.append(h('span', 'esi-powered', T[LOC].powered + ' <b>Eureka Static Intelligence</b>'));
+  QUICK.slice(0, 3).forEach(id => {
+    if (!NODES[id]) return;
+    const m = h('button', 'esi-mini', esc(qOf(id))); m.title = qOf(id);
+    m.onclick = () => { userSay(qOf(id)); answer(id); };
+    foot.append(m);
+  });
+  const vw = h('span', 'esi-ver-wrap');
+  const vb = h('button', 'esi-version');
+  vb.innerHTML = '<span class="esi-verdot"></span>Eureka Static Intelligence 2.0 High' + SVG.caret;
+  vb.onclick = () => toggleVerMenu(vw);
+  vw.append(vb); foot.append(vw);
   comp.append(foot); left.append(comp); main.append(left);
 
+  // ── rail: two locked panels with icons ──
   const rail = h('div', 'esi-rail');
-  const p1 = h('div', 'esi-panel'); p1.append(h('div', 'esi-phead', T[LOC].quick));
+  const p1 = h('div', 'esi-panel');
+  const ph1 = h('div', 'esi-phead'); ph1.innerHTML = SVG.q + esc(T[LOC].quick); p1.append(ph1);
   const b1 = h('div', 'esi-pbody');
   QUICK.forEach(id => { if (!NODES[id]) return; const q = h('button', 'esi-qq', esc(qOf(id))); q.onclick = () => { userSay(qOf(id)); answer(id); }; b1.append(q); });
   p1.append(b1); rail.append(p1);
   const p2 = h('div', 'esi-panel');
-  if (PACK.flow) { p2.append(h('div', 'esi-phead', 'Flow')); /* M2 */ }
-  else {
-    p2.append(h('div', 'esi-phead', T[LOC].toolbox));
-    const b2 = h('div', 'esi-pbody');
+  const ph2 = h('div', 'esi-phead'); ph2.innerHTML = SVG.flow + esc(PACK.flow ? 'Flow' : T[LOC].toolbox); p2.append(ph2);
+  const b2 = h('div', 'esi-pbody');
+  if (!PACK.flow) {
     const tools = [
       ['calculator', '🧮', T[LOC].toolCalc], ['json', '{}', T[LOC].toolJson], ['timestamp', '🕑', T[LOC].toolTs],
       ['units', '⇄', T[LOC].toolUnits], ['textstats', '𝚺', T[LOC].toolStats],
     ].filter(([k]) => (PACK.toolbox || []).includes(k));
     tools.forEach(([k, ico, label]) => { const btn = h('button', 'esi-tool'); btn.innerHTML = '<span class="esi-tool-ico">' + ico + '</span>' + esc(label); btn.onclick = () => showTool(k); b2.append(btn); });
     const img = h('button', 'esi-tool dis'); img.innerHTML = '<span class="esi-tool-ico">🖼</span>' + esc(T[LOC].toolImg); b2.append(img);
-    p2.append(b2);
   }
-  rail.append(p2); main.append(rail); app.append(main);
+  p2.append(b2); rail.append(p2); main.append(rail); app.append(main);
+}
+function toggleVerMenu(wrap) {
+  const old = wrap.querySelector('.esi-ver-menu');
+  const bd = document.querySelector('.esi-ver-backdrop');
+  if (old) { old.remove(); if (bd) bd.remove(); return; }
+  const backdrop = h('div', 'esi-ver-backdrop');
+  backdrop.onclick = () => { backdrop.remove(); const m = wrap.querySelector('.esi-ver-menu'); if (m) m.remove(); };
+  document.body.append(backdrop);
+  const menu = h('div', 'esi-ver-menu');
+  const hi = h('button', 'esi-ver-item on'); hi.innerHTML = 'High ' + SVG.check;
+  hi.onclick = () => { menu.remove(); backdrop.remove(); };
+  const med = h('button', 'esi-ver-item', 'Medium'); med.disabled = true;
+  const lo = h('button', 'esi-ver-item', 'Low'); lo.disabled = true;
+  menu.append(hi, med, lo); wrap.append(menu);
 }
 const qOf = (id) => (NODES[id].q[LOC] || NODES[id].q.en);
 const aOf = (id) => (NODES[id].a[LOC] || NODES[id].a.en);
