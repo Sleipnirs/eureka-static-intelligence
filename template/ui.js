@@ -179,10 +179,15 @@ function aeoCard(query) {
   const card = h('div', 'esi-card');
   card.append(h('div', 'esi-card-title', esc(T[LOC].aeoTitle)));
   const row = h('div', 'esi-linkcard');
-  row.append(h('img')).src = 'https://www.google.com/favicon.ico';
+  const img = h('img');
+  img.src = 'https://www.google.com/favicon.ico';
+  img.alt = '';
+  img.onerror = () => { img.style.display = 'none'; };
+  row.append(img);
   const body = h('div', 'esi-lc-body');
   body.append(h('div', 'esi-lc-d', esc(T[LOC].aeoDesc)));
   body.append(h('div', 'esi-lc-q', '“' + esc(query) + '”'));
+  body.append(h('div', 'esi-meta', 'google.com · AI Mode'));
   row.append(body);
   const open = h('button', 'esi-open', esc(T[LOC].aeoCta));
   open.onclick = () => window.open('https://www.google.com/search?udm=50&q=' + encodeURIComponent(query), '_blank', 'noopener');
