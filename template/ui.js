@@ -20,6 +20,17 @@ const T = {
         toolCalc: '计算器', toolJson: 'JSON 校验', toolTs: '时间戳', toolUnits: '单位换算', toolStats: '文本统计 + SHA-256', toolImg: '图像工具（预留）',
         calcTip: '小技巧：直接在对话框敲算式也行。', jsonBtn: '校验并美化', statsBtn: '计算 SHA-256', now: '当前' },
 };
+const SVG = {
+  spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>',
+  q: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+  flow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h7"/></svg>',
+  caret: '<svg class="esi-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+};
 const $ = (s2, el) => (el || document).querySelector(s2);
 const app = $('#app');
 function h(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
@@ -28,48 +39,84 @@ const esc = (s2) => String(s2).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt
 function build() {
   const B = PACK.brand;
   app.innerHTML = '';
+  // ── header: FinChip banner style ──
   const head = h('div', 'esi-header');
-  head.append(h('div', 'esi-brand', esc(B.name)));
-  if (B.tagline) head.append(h('div', 'esi-tagline', esc(B.tagline[LOC] || B.tagline.en || '')));
+  head.insertAdjacentHTML('beforeend', SVG.spark);
+  head.append(h('span', 'esi-brand', esc(B.name)));
+  head.append(h('span', 'esi-tag', esc(B.tag || 'Beta')));
+  if (B.tagline) head.append(h('span', 'esi-tagline', esc(B.tagline[LOC] || B.tagline.en || '')));
   head.append(h('div', 'esi-spacer'));
-  const rBtn = h('button', 'esi-orb', '↻'); rBtn.title = T[LOC].reset; rBtn.onclick = reset; head.append(rBtn);
-  const dBtn = h('button', 'esi-orb', '☾'); dBtn.onclick = () => document.body.classList.toggle('esi-dark'); head.append(dBtn);
-  if (LANGS.length > 1) { const lBtn = h('button', 'esi-orb', '文'); lBtn.onclick = () => { LOC = LOC === LANGS[0] ? LANGS[1] : LANGS[0]; build(); botSay(PACK.brand.welcome[LOC] || PACK.brand.welcome.en, welcomeChips()); }; head.append(lBtn); }
+  const rBtn = h('button', 'esi-orb', SVG.refresh); rBtn.title = T[LOC].reset; rBtn.onclick = reset; head.append(rBtn);
+  const dBtn = h('button', 'esi-orb', document.body.classList.contains('esi-dark') ? SVG.moon : SVG.sun);
+  dBtn.onclick = () => { document.body.classList.toggle('esi-dark'); dBtn.innerHTML = document.body.classList.contains('esi-dark') ? SVG.moon : SVG.sun; };
+  head.append(dBtn);
+  if (LANGS.length > 1) {
+    const lBtn = h('button', 'esi-orb', LOC === 'zh' ? 'Zh' : 'En');
+    lBtn.title = 'En / Zh';
+    lBtn.onclick = () => { LOC = LOC === LANGS[0] ? LANGS[1] : LANGS[0]; build(); botSay(PACK.brand.welcome[LOC] || PACK.brand.welcome.en, welcomeChips()); };
+    head.append(lBtn);
+  }
   app.append(head);
 
   const main = h('div', 'esi-main');
   const left = h('div', 'esi-left');
-  left.append(h('div', 'esi-chat')); left.querySelector('.esi-chat').id = 'chat';
+  const chatEl = h('div', 'esi-chat'); chatEl.id = 'chat'; left.append(chatEl);
+  // ── composer ──
   const comp = h('div', 'esi-composer');
   const row = h('div', 'esi-inrow');
   const ta = h('textarea', 'esi-input'); ta.id = 'input'; ta.rows = 1; ta.placeholder = T[LOC].placeholder;
   ta.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
-  ta.oninput = () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 140) + 'px'; };
-  const sb = h('button', 'esi-send', '➤'); sb.onclick = send;
+  ta.oninput = () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 160) + 'px'; };
+  const sb = h('button', 'esi-send', SVG.send); sb.onclick = send;
   row.append(ta, sb); comp.append(row);
+  // foot: three default quick minis + version dropdown
   const foot = h('div', 'esi-foot');
-  foot.append(h('span', 'esi-powered', T[LOC].powered + ' <b>Eureka Static Intelligence</b>'));
+  QUICK.slice(0, 3).forEach(id => {
+    if (!NODES[id]) return;
+    const m = h('button', 'esi-mini', esc(qOf(id))); m.title = qOf(id);
+    m.onclick = () => { userSay(qOf(id)); answer(id); };
+    foot.append(m);
+  });
+  const vw = h('span', 'esi-ver-wrap');
+  const vb = h('button', 'esi-version');
+  vb.innerHTML = '<span class="esi-verdot"></span>Eureka Static Intelligence 2.0 High' + SVG.caret;
+  vb.onclick = () => toggleVerMenu(vw);
+  vw.append(vb); foot.append(vw);
   comp.append(foot); left.append(comp); main.append(left);
 
+  // ── rail: two locked panels with icons ──
   const rail = h('div', 'esi-rail');
-  const p1 = h('div', 'esi-panel'); p1.append(h('div', 'esi-phead', T[LOC].quick));
+  const p1 = h('div', 'esi-panel');
+  const ph1 = h('div', 'esi-phead'); ph1.innerHTML = SVG.q + esc(T[LOC].quick); p1.append(ph1);
   const b1 = h('div', 'esi-pbody');
   QUICK.forEach(id => { if (!NODES[id]) return; const q = h('button', 'esi-qq', esc(qOf(id))); q.onclick = () => { userSay(qOf(id)); answer(id); }; b1.append(q); });
   p1.append(b1); rail.append(p1);
   const p2 = h('div', 'esi-panel');
-  if (PACK.flow) { p2.append(h('div', 'esi-phead', 'Flow')); /* M2 */ }
-  else {
-    p2.append(h('div', 'esi-phead', T[LOC].toolbox));
-    const b2 = h('div', 'esi-pbody');
+  const ph2 = h('div', 'esi-phead'); ph2.innerHTML = SVG.flow + esc(PACK.flow ? 'Flow' : T[LOC].toolbox); p2.append(ph2);
+  const b2 = h('div', 'esi-pbody');
+  if (!PACK.flow) {
     const tools = [
       ['calculator', '🧮', T[LOC].toolCalc], ['json', '{}', T[LOC].toolJson], ['timestamp', '🕑', T[LOC].toolTs],
       ['units', '⇄', T[LOC].toolUnits], ['textstats', '𝚺', T[LOC].toolStats],
     ].filter(([k]) => (PACK.toolbox || []).includes(k));
     tools.forEach(([k, ico, label]) => { const btn = h('button', 'esi-tool'); btn.innerHTML = '<span class="esi-tool-ico">' + ico + '</span>' + esc(label); btn.onclick = () => showTool(k); b2.append(btn); });
     const img = h('button', 'esi-tool dis'); img.innerHTML = '<span class="esi-tool-ico">🖼</span>' + esc(T[LOC].toolImg); b2.append(img);
-    p2.append(b2);
   }
-  rail.append(p2); main.append(rail); app.append(main);
+  p2.append(b2); rail.append(p2); main.append(rail); app.append(main);
+}
+function toggleVerMenu(wrap) {
+  const old = wrap.querySelector('.esi-ver-menu');
+  const bd = document.querySelector('.esi-ver-backdrop');
+  if (old) { old.remove(); if (bd) bd.remove(); return; }
+  const backdrop = h('div', 'esi-ver-backdrop');
+  backdrop.onclick = () => { backdrop.remove(); const m = wrap.querySelector('.esi-ver-menu'); if (m) m.remove(); };
+  document.body.append(backdrop);
+  const menu = h('div', 'esi-ver-menu');
+  const hi = h('button', 'esi-ver-item on'); hi.innerHTML = 'High ' + SVG.check;
+  hi.onclick = () => { menu.remove(); backdrop.remove(); };
+  const med = h('button', 'esi-ver-item', 'Medium'); med.disabled = true;
+  const lo = h('button', 'esi-ver-item', 'Low'); lo.disabled = true;
+  menu.append(hi, med, lo); wrap.append(menu);
 }
 const qOf = (id) => (NODES[id].q[LOC] || NODES[id].q.en);
 const aOf = (id) => (NODES[id].a[LOC] || NODES[id].a.en);
