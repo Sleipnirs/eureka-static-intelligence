@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>%%BRAND_NAME%% · Assistant</title>
+<style>
+:root {
+  --accent: %%ACCENT%%; --accent-d: color-mix(in srgb, var(--accent) 78%, #000);
+  --accent-l: color-mix(in srgb, var(--accent) 8%, #fff); --accent-m: color-mix(in srgb, var(--accent) 30%, #fff);
+  --bg: #F6F9FD; --white: #fff; --off: #f1f7fc; --off2: #e8f2fb; --line: #d9e8f4; --line2: #c7dcea;
+  --ink: #101827; --ink2: #243044; --ink3: #5f6b82; --ink4: #8d98aa;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace; --sans: -apple-system, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); font-family: var(--sans); color: var(--ink); line-height: 1.6; font-size: 14px; }
+.esi-app { max-width: 1080px; margin: 0 auto; padding: 16px; height: 100vh; display: flex; flex-direction: column; gap: 12px; }
+.esi-header { display: flex; align-items: center; gap: 10px; padding: 12px 18px; background: rgba(255,255,255,.9); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 6%, transparent); }
+.esi-brand { font-size: 17px; font-weight: 650; }
+.esi-tagline { font-size: 11px; color: var(--ink4); }
+.esi-spacer { flex: 1; }
+.esi-orb { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line2); background: var(--white); color: var(--ink3); cursor: pointer; font-size: 12px; }
+.esi-orb:hover { color: var(--accent); border-color: var(--accent-m); }
+.esi-main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 280px; gap: 12px; }
+.esi-left { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.esi-chat { flex: 1; min-height: 0; overflow-y: auto; padding: 18px; background: linear-gradient(180deg, var(--accent-l), rgba(241,247,252,.5)); border: 1px solid var(--line); border-radius: 16px; scroll-behavior: smooth; }
+.esi-msg { display: flex; margin-bottom: 12px; }
+.esi-msg.user { justify-content: flex-end; }
+.esi-bubble { max-width: 80%; padding: 11px 15px; font-size: 13.5px; white-space: pre-wrap; word-break: break-word; }
+.esi-msg.bot .esi-bubble { background: var(--white); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px; }
+.esi-msg.user .esi-bubble { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 85%, #fff), var(--accent)); color: #fff; border-radius: 14px 4px 14px 14px; }
+.esi-avatar { flex: 0 0 24px; width: 24px; height: 24px; margin-right: 8px; border-radius: 7px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; align-self: flex-start; margin-top: 2px; }
+.esi-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px 32px; }
+.esi-chip { font-size: 11.5px; padding: 5px 12px; border-radius: 18px; border: 1px solid var(--line2); color: var(--ink3); background: var(--white); cursor: pointer; transition: all .12s; font-family: var(--sans); }
+.esi-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-l); }
+.esi-widget { margin: 0 0 14px 32px; max-width: 80%; }
+.esi-card { background: var(--white); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px; padding: 12px 14px; box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 6%, transparent); }
+.esi-card-title { font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); border-bottom: 1px solid var(--off2); padding-bottom: 7px; margin-bottom: 9px; }
+.esi-composer { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; box-shadow: 0 14px 34px color-mix(in srgb, var(--accent) 8%, transparent); }
+.esi-inrow { display: flex; align-items: flex-end; gap: 9px; }
+.esi-input { flex: 1; min-height: 22px; max-height: 140px; resize: none; border: 0; outline: none; font: inherit; font-size: 13.5px; padding: 4px 2px; background: transparent; }
+.esi-send { flex: 0 0 36px; width: 36px; height: 36px; border: 0; border-radius: 11px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 70%, #7fe0ff), var(--accent)); color: #fff; cursor: pointer; font-size: 15px; }
+.esi-foot { display: flex; align-items: center; margin-top: 7px; padding-top: 7px; border-top: 1px solid var(--off2); }
+.esi-powered { margin-left: auto; font-family: var(--mono); font-size: 9.5px; color: var(--ink4); }
+.esi-powered b { color: var(--accent); font-weight: 600; }
+.esi-rail { min-height: 0; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; }
+.esi-panel { min-height: 0; display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: 13px; overflow: hidden; }
+.esi-phead { font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); padding: 9px 12px 8px; border-bottom: 1px solid var(--off2); }
+.esi-pbody { flex: 1; min-height: 0; overflow-y: auto; padding: 8px 10px; }
+.esi-qq { display: block; width: 100%; text-align: left; font: inherit; font-size: 12px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; margin-bottom: 6px; cursor: pointer; transition: all .12s; }
+.esi-qq:hover { border-color: var(--accent-m); background: var(--accent-l); }
+.esi-tool { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font: inherit; font-size: 12px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; cursor: pointer; }
+.esi-tool:hover { border-color: var(--accent-m); background: var(--accent-l); }
+.esi-tool.dis { opacity: .45; cursor: default; }
+.esi-tool-ico { font-size: 14px; }
+.esi-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border: 1px solid var(--off2); background: var(--off); border-radius: 7px; margin-bottom: 5px; font-size: 12px; }
+.esi-meta { font-family: var(--mono); font-size: 10px; color: var(--ink4); }
+.esi-ti { width: 100%; font-family: var(--mono); font-size: 11.5px; background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; outline: none; margin-bottom: 6px; }
+.esi-ta { width: 100%; font-family: var(--mono); font-size: 11px; background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; outline: none; resize: vertical; margin-bottom: 6px; }
+.esi-btn { font: inherit; font-size: 11px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--off); color: var(--ink3); cursor: pointer; margin-right: 5px; }
+.esi-btn:hover { color: var(--accent); border-color: var(--accent-m); }
+.esi-btn.pri { background: var(--accent); color: #fff; border: 0; font-weight: 600; }
+.esi-hash { font-family: var(--mono); font-size: 10px; color: var(--accent-d); word-break: break-all; background: var(--white); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; margin-top: 5px; }
+.esi-grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.esi-key { font-family: var(--mono); font-size: 12.5px; padding: 8px 0; border: 1px solid var(--line); border-radius: 7px; background: var(--white); cursor: pointer; }
+.esi-key.op { background: var(--off); color: var(--accent-d); }
+.esi-key.eq { grid-column: span 2; background: var(--accent); color: #fff; border: 0; font-weight: 700; }
+.esi-linkcard { display: flex; gap: 10px; align-items: center; }
+.esi-linkcard img { width: 22px; height: 22px; }
+.esi-lc-body { flex: 1; min-width: 0; }
+.esi-lc-t { font-size: 12.5px; font-weight: 600; }
+.esi-lc-d { font-size: 11px; color: var(--ink3); }
+.esi-lc-q { font-family: var(--mono); font-size: 10px; color: var(--accent-d); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.esi-open { flex: 0 0 auto; font: inherit; font-size: 11.5px; font-weight: 600; color: #fff; background: var(--accent); border: 0; border-radius: 9px; padding: 8px 12px; cursor: pointer; }
+.esi-dark { --bg: #0b1322; --white: #111a2c; --off: #0d1524; --off2: #1c2740; --line: #223353; --line2: #2e4468; --ink: #e9f1fc; --ink2: #d2deee; --ink3: #94a6c2; --ink4: #687a9b; --accent-l: #11233b; --accent-m: #1e4b75; }
+@media (max-width: 860px) { .esi-main { grid-template-columns: 1fr; } .esi-rail { grid-template-rows: none; grid-template-columns: 1fr 1fr; } .esi-app { height: auto; } .esi-chat { min-height: 380px; } }
+@media (max-width: 560px) { .esi-rail { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="esi-app" id="app"></div>
+<script type="application/json" id="esi-pack">%%PACK_JSON%%</script>
+<script>
+/* ══════════════ Eureka Static Intelligence · Engine (vanilla, no deps) ══════════════ */
+/* ENGINE_START */
+const PACK = JSON.parse(document.getElementById('esi-pack').textContent);
+const NODES = {}; PACK.faq.forEach(n => NODES[n.id] = n);
+const IDS = PACK.faq.map(n => n.id);
+const QUICK = PACK.quick;
+const LANGS = PACK.brand.langs;
+let LOC = LANGS[0];
+
+const STOP = new Set(('the a an is are was be been do does did can could will would should what when where which who why how i my me we our you your it its this that these to of for in on at by and or but if with about into from have has let tell know show give explain describe please want need just some any more most like help get').split(' '));
+const SMALLTALK = new Set(("good great nice cool fine ok okay awesome amazing excellent perfect wonderful fantastic brilliant superb terrific lovely beautiful sweet neat smart clever helpful useful interesting yes yeah yep yup sure right correct exactly indeed absolutely definitely totally agreed agree understood gotcha noted alright thanks thank thankyou thx ty cheers appreciated wow whoa omg yay haha hahaha hehe lol hmm ah aha oh ohh love loved like liked works worked impressed amazed pleased glad happy 好 好的 好啊 很好 挺好 真好 太好了 棒 很棒 超棒 真棒 太棒了 牛 牛逼 厉害 太厉害了 强 优秀 完美 漂亮 绝了 妙 赞 好评 满分 666 可以 行 没问题 不错 对 对的 没错 确实 是的 同意 嗯 嗯嗯 哦 收到 明白 明白了 懂了 了解 知道了 学到了 清楚 谢谢 谢了 多谢 感谢 辛苦了 哇 哇塞 天哪 哈哈 哈哈哈 嘿嘿 有意思 有趣 好用 有用 有帮助 好主意 加油 真香 爱了 喜欢 服了 佩服 稳 搞定 妥了").split(' ').concat(PACK.vocab.smalltalkExtra || []));
+const FILLER = new Set(("this that it its is was are be been im i am so very really quite pretty such too just a an the and but also well now then man all thing one sounds looks seems feels").split(' '));
+const ZH_FILLER = /[这那个真太很挺蛮啊呀呢吧了的哟嘛也就都是滴之极其非常相当确实还比较特别]/g;
+const ZH_STOPBG = new Set('什么 怎么 么样 怎样 如何 哪些 多少 可以 是否 有没 没有 这个 那个 还是 以及 或者 是不 不是 能不 不能 一个 就是 的话 一下 这样 那样 为啥 有点 一些 还有 然后 所以 因为'.split(' '));
+const SYN = PACK.vocab.synonymsStemmed || {};
+const ZH_TERMS = (PACK.vocab.zhTerms || []).map(([p, en]) => [new RegExp(p, 'g'), en]);
+
+function stem(t) { return t.replace(/(ing|ed|es|s)$/, '').replace(/e$/, ''); }
+function tokenize(text, expand) {
+  const out = new Set(); const lower = text.toLowerCase();
+  (lower.match(/[a-z0-9]{3,}/g) || []).forEach(m => {
+    if (STOP.has(m)) return;
+    const st = stem(m); out.add(st);
+    if (expand && SYN[st]) SYN[st].forEach(x => out.add(x));
+  });
+  (lower.match(/[一-鿿]+/g) || []).forEach(run => {
+    for (let i = 0; i < run.length - 1; i++) { const bg = run.slice(i, i + 2); if (!ZH_STOPBG.has(bg)) out.add(bg); }
+  });
+  return out;
+}
+function grams(text) {
+  const gs = []; const t = text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, ' ');
+  t.split(' ').forEach(w => {
+    if (!w) return;
+    if (/[一-鿿]/.test(w)) { for (let i = 0; i < w.length - 1; i++) { const bg = w.slice(i, i + 2); if (!ZH_STOPBG.has(bg)) gs.push(bg); } }
+    else if (w.length >= 3) { const p = '#' + w + '#'; for (let i = 0; i < p.length - 2; i++) gs.push(p.slice(i, i + 3)); }
+  });
+  return gs;
+}
+const GDF = {}, NVEC = {}, NNORM = {}, QTOK = {}, ATOK = {}, TDF = {};
+IDS.forEach(id => {
+  const n = NODES[id];
+  const txt = n.q.en + ' ' + (n.q.zh || '') + ' ' + (n.keywords || []).join(' ');
+  const tf = new Map();
+  grams(txt).forEach(g => tf.set(g, (tf.get(g) || 0) + 1));
+  grams(n.a.en + ' ' + (n.a.zh || '')).forEach(g => tf.set(g, (tf.get(g) || 0) + 0.35));
+  NVEC[id] = tf; tf.forEach((_, g) => GDF[g] = (GDF[g] || 0) + 1);
+  QTOK[id] = tokenize(txt, false); QTOK[id].forEach(t => TDF[t] = (TDF[t] || 0) + 1);
+  ATOK[id] = tokenize(n.a.en + ' ' + (n.a.zh || ''), false);
+});
+IDS.forEach(id => {
+  let norm = 0;
+  NVEC[id].forEach((f, g) => { const w = (1 + Math.log(f)) * Math.log(1 + IDS.length / (GDF[g] || 1)); NVEC[id].set(g, w); norm += w * w; });
+  NNORM[id] = Math.sqrt(norm) || 1;
+});
+function tw(t) { const d = TDF[t] || 0; return d <= 2 ? 3 : d <= 5 ? 2 : d <= 12 ? 1 : 0; }
+const PARENTS = {}; IDS.forEach(id => (NODES[id].children || []).forEach(c => (PARENTS[c] = PARENTS[c] || []).push(id)));
+
+function augment(text, S) {
+  let out = text;
+  if (/[一-鿿]/.test(text)) {
+    const hits = [];
+    ZH_TERMS.forEach(([re, en]) => { re.lastIndex = 0; const m = re.exec(text); if (m) hits.push([m.index, en]); });
+    hits.sort((a, b) => a[0] - b[0]);
+    // verb-first Chinese: the EARLIEST matched term carries the intent — double it
+    if (hits.length) out += ' ' + hits.map(([, en], i) => (i === 0 ? en + ' ' + en : en)).join(' ');
+  }
+  // Ellipsis injection: only when the query carries ZERO content tokens of
+  // its own ("what about it?", "然后呢") — a query with real content words
+  // must stand on them; the mild context bonus handles topical continuity.
+  if (S && S.visited.length && tokenize(text, false).size === 0) {
+    const last = S.visited[S.visited.length - 1];
+    if (last && NODES[last]) out += ' ' + (NODES[last].keywords || []).slice(0, 2).join(' ') + ' ' + last.replace(/-/g, ' ');
+  }
+  return out;
+}
+function score(raw, S) {
+  const text = augment(raw, S), s = text.toLowerCase(), ut = tokenize(text, true);
+  const qtf = new Map(); grams(text).forEach(g => qtf.set(g, (qtf.get(g) || 0) + 1));
+  let qn = 0; qtf.forEach((f, g) => { const w = (1 + Math.log(f)) * Math.log(1 + IDS.length / (GDF[g] || IDS.length)); qtf.set(g, w); qn += w * w; });
+  qn = Math.sqrt(qn) || 1;
+  const res = [];
+  IDS.forEach(id => {
+    const n = NODES[id]; let sc = 0;
+    { const matched = [];
+      [...(n.keywords || [])].sort((a, b) => b.length - a.length).forEach(kw => {
+        if (!s.includes(kw)) return;
+        if (matched.some(m => m.includes(kw))) return; // prefix/substring of an already-scored hit
+        matched.push(kw);
+        sc += kw.length > 4 || (/[一-鿿]/.test(kw) && kw.length >= 3) ? 2 : 1;
+      }); }
+    if (s.includes(n.q.en.toLowerCase()) || (n.q.zh && s.includes(n.q.zh))) sc += 6;
+    ut.forEach(t => {
+      if (QTOK[id].has(t)) { sc += tw(t); return; }
+      if (t.length >= 5 && !/[一-鿿]/.test(t)) { for (const qt of QTOK[id]) { if (qt.length >= 5 && (qt.startsWith(t) || t.startsWith(qt))) { sc += Math.max(1, tw(qt) - 1); return; } } }
+      if (ATOK[id].has(t)) sc += Math.max(1, Math.floor(tw(t) / 2));
+    });
+    let dot = 0; qtf.forEach((w, g) => { const nw = NVEC[id].get(g); if (nw) dot += w * nw; });
+    const cos = dot / (qn * NNORM[id]);
+    if (cos > 0.14) sc += Math.min(6, Math.round(cos * 10));
+    if (S) {
+      const lastId = S.visited[S.visited.length - 1];
+      const pron = /\b(it|this|that)\b|它|这个|那个/i.test(raw);
+      if (lastId === id) sc -= pron ? 9 : 2; // pronoun follow-up must move on
+      const rec = S.visited.slice(-2);
+      rec.forEach(r => {
+        if ((NODES[r] && (NODES[r].children || []).includes(id))) sc += 2;
+        else if ((PARENTS[r] || []).includes(id)) sc += 1.5;
+        else if (r.split('-')[0] === id.split('-')[0] && r !== id) sc += 1;
+      });
+    }
+    if (sc > 0) res.push({ id, sc });
+  });
+  return res.sort((a, b) => b.sc - a.sc);
+}
+function isSmallTalk(t) {
+  const s = t.trim().toLowerCase().replace(/[!.。！~,，?？\s]+$/g, ''); if (!s || s.length > 40) return false;
+  if (SMALLTALK.has(s)) return true;
+  if (/[一-鿿]/.test(s)) { const f = s.replace(/\s+/g, ''); const st = f.replace(ZH_FILLER, ''); const re = eskRe(); return (f.length <= 12 && re.test(f)) || (st && st.length <= 12 && re.test(st)); }
+  const ws = s.split(/\s+/); if (ws.length > 6) return false;
+  let sent = 0; for (const w of ws) { if (FILLER.has(w)) continue; if (SMALLTALK.has(w)) { sent++; continue; } return false; }
+  return sent > 0;
+}
+let _eskRe = null;
+function eskRe() { if (!_eskRe) _eskRe = new RegExp('^(?:' + [...SMALLTALK].filter(w => /[一-鿿0-9]/.test(w)).sort((a, b) => b.length - a.length).join('|') + ')+$'); return _eskRe; }
+function inquiry(t) { const s = t.toLowerCase().trim(); return /[?？]$/.test(s) || /^(what|how|why|who|where|which|can|do|does|is|are|let me|tell me|show me|explain|give me|help|i want to know|how to)/.test(s) || /(什么|怎么|如何|哪些|多少|吗)|^(请|告诉我|说说|讲讲|介绍|解释|我想知道|想了解)/.test(s); }
+function evalExpr(raw) {
+  const src = raw.replace(/[×xX]/g, '*').replace(/[÷]/g, '/').replace(/\s+/g, '');
+  if (!/^[\d+\-*/%^().]+$/.test(src) || !/\d/.test(src)) return null;
+  let p = 0;
+  function num() { const st = p; while (p < src.length && /[\d.]/.test(src[p])) p++; if (st === p) return null; const v = Number(src.slice(st, p)); return isFinite(v) ? v : null; }
+  function fac() { if (src[p] === '(') { p++; const v = expr(); if (v === null || src[p] !== ')') return null; p++; return v; } if (src[p] === '-') { p++; const v = fac(); return v === null ? null : -v; } return num(); }
+  function pow() { const b = fac(); if (b === null) return null; if (src[p] === '^') { p++; const e = pow(); return e === null ? null : Math.pow(b, e); } return b; }
+  function term() { let v = pow(); if (v === null) return null; while (/[*/%]/.test(src[p])) { const o = src[p++]; const r = pow(); if (r === null || (o !== '*' && r === 0)) return null; v = o === '*' ? v * r : o === '/' ? v / r : v % r; } return v; }
+  function expr() { let v = term(); if (v === null) return null; while (/[+\-]/.test(src[p])) { const o = src[p++]; const r = term(); if (r === null) return null; v = o === '+' ? v + r : v - r; } return v; }
+  const out = expr(); return p === src.length && out !== null && isFinite(out) ? out : null;
+}
+/* ENGINE_END */
+%%UI_SCRIPT%%
+</script>
+</body>
+</html>

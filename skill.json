@@ -1,0 +1,38 @@
+{
+  "$schema": "https://finchip.ai/schemas/skill/1.0.json",
+  "name": "Eureka-Static-Intelligence",
+  "version": "0.1.0",
+  "title": "Eureka Static Intelligence",
+  "description": "Compile a standardized enterprise FAQ list + industry vocabulary (+ optional task flow) into a self-contained static-intelligence chatbox: one HTML file, no LLM, no backend, conversationally robust.",
+  "category": "dev-environment",
+  "x-finchip/tier": "standard",
+  "runtime": { "language": "python", "min_version": "3.10", "entrypoint": "main.py", "dependencies": [] },
+  "invocation": {
+    "modes": {
+      "cli": "python main.py <input.json> [--out DIR]",
+      "examples": ["python main.py examples/input_dental.json"]
+    },
+    "input_schema": {
+      "type": "object",
+      "required": ["brand", "faq"],
+      "properties": {
+        "brand": { "type": "object", "description": "name/langs/welcome/anchor/accent — see INPUT-FORMAT.md" },
+        "faq": { "type": "array", "minItems": 10, "description": "bilingual Q&A entries; keywords/children/mainline optional (auto-derived)" },
+        "vocab": { "type": "object", "description": "synonyms + zhTerms bridge + smalltalkExtra" },
+        "flow": { "type": ["object", "null"], "description": "optional task flow (M2); null renders the toolbox" },
+        "toolbox": { "type": "array", "description": "tool switches; imageGen slot reserved" }
+      }
+    },
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "skill": { "type": "string" }, "status": { "type": "string", "enum": ["ok", "error"] },
+        "result": { "type": "object", "properties": { "chatbox": { "type": "string" }, "nodes": { "type": "integer" }, "quick": { "type": "array" }, "size_kb": { "type": "number" } } },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "x-eureka/lineage": "FinChip Generator v3.0 engine, distilled",
+  "generator": "Eureka Group",
+  "disclaimer": "Informational only. Review and test before production use."
+}
