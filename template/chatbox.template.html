@@ -126,8 +126,8 @@ const LANGS = PACK.brand.langs;
 let LOC = LANGS[0];
 
 const STOP = new Set(('the a an is are was be been do does did can could will would should what when where which who why how i my me we our you your it its this that these to of for in on at by and or but if with about into from have has let tell know show give explain describe please want need just some any more most like help get').split(' '));
-const SMALLTALK = new Set(("good great nice cool fine ok okay awesome amazing excellent perfect wonderful fantastic brilliant superb terrific lovely beautiful sweet neat smart clever helpful useful interesting yes yeah yep yup sure right correct exactly indeed absolutely definitely totally agreed agree understood gotcha noted alright thanks thank thankyou thx ty cheers appreciated wow whoa omg yay haha hahaha hehe lol hmm ah aha oh ohh love loved like liked works worked impressed amazed pleased glad happy 好 好的 好啊 很好 挺好 真好 太好了 棒 很棒 超棒 真棒 太棒了 牛 牛逼 厉害 太厉害了 强 优秀 完美 漂亮 绝了 妙 赞 好评 满分 666 可以 行 没问题 不错 对 对的 没错 确实 是的 同意 嗯 嗯嗯 哦 收到 明白 明白了 懂了 了解 知道了 学到了 清楚 谢谢 谢了 多谢 感谢 辛苦了 哇 哇塞 天哪 哈哈 哈哈哈 嘿嘿 有意思 有趣 好用 有用 有帮助 好主意 加油 真香 爱了 喜欢 服了 佩服 稳 搞定 妥了").split(' ').concat(PACK.vocab.smalltalkExtra || []));
-const FILLER = new Set(("this that it its is was are be been im i am so very really quite pretty such too just a an the and but also well now then man all thing one sounds looks seems feels").split(' '));
+const SMALLTALK = new Set(("hello hi hey heya hiya howdy greetings goodmorning goodafternoon goodevening goodnight bye goodbye 你好 您好 你好呀 你好啊 哈喽 嗨 早上好 中午好 下午好 晚上好 早 早安 晚安 在吗 在不在 再见 拜拜 good great nice cool fine ok okay awesome amazing excellent perfect wonderful fantastic brilliant superb terrific lovely beautiful sweet neat smart clever helpful useful interesting yes yeah yep yup sure right correct exactly indeed absolutely definitely totally agreed agree understood gotcha noted alright thanks thank thankyou thx ty cheers appreciated wow whoa omg yay haha hahaha hehe lol hmm ah aha oh ohh love loved like liked works worked impressed amazed pleased glad happy 好 好的 好啊 很好 挺好 真好 太好了 棒 很棒 超棒 真棒 太棒了 牛 牛逼 厉害 太厉害了 强 优秀 完美 漂亮 绝了 妙 赞 好评 满分 666 可以 行 没问题 不错 对 对的 没错 确实 是的 同意 嗯 嗯嗯 哦 收到 明白 明白了 懂了 了解 知道了 学到了 清楚 谢谢 谢了 多谢 感谢 辛苦了 哇 哇塞 天哪 哈哈 哈哈哈 嘿嘿 有意思 有趣 好用 有用 有帮助 好主意 加油 真香 爱了 喜欢 服了 佩服 稳 搞定 妥了").split(' ').concat(PACK.vocab.smalltalkExtra || []));
+const FILLER = new Set(("this that it its is was are be been im i am so very really quite pretty such too just a an the and but also well now then man all thing one sounds looks seems feels lot bunch ton").split(' '));
 const ZH_FILLER = /[这那个真太很挺蛮啊呀呢吧了的哟嘛也就都是滴之极其非常相当确实还比较特别]/g;
 const ZH_STOPBG = new Set('什么 怎么 么样 怎样 如何 哪些 多少 可以 是否 有没 没有 这个 那个 还是 以及 或者 是不 不是 能不 不能 一个 就是 的话 一下 这样 那样 为啥 有点 一些 还有 然后 所以 因为'.split(' '));
 const SYN = PACK.vocab.synonymsStemmed || {};
@@ -150,7 +150,12 @@ function grams(text) {
   const gs = []; const t = text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, ' ');
   t.split(' ').forEach(w => {
     if (!w) return;
-    if (/[一-鿿]/.test(w)) { for (let i = 0; i < w.length - 1; i++) { const bg = w.slice(i, i + 2); if (!ZH_STOPBG.has(bg)) gs.push(bg); } }
+    if (/[一-鿿]/.test(w)) {
+      for (let i = 0; i < w.length - 1; i++) { const bg = w.slice(i, i + 2); if (!ZH_STOPBG.has(bg)) gs.push(bg); }
+      // CJK unigram layer: single chars carry real signal in Chinese
+      // (停/素/辣); tf-idf downweights the ubiquitous ones automatically.
+      for (const ch of w) { if (!'的吗呢了吧啊呀哦是有不我你他她它们在和与或及个么什怎这那能可要会好多少'.includes(ch)) gs.push(ch); }
+    }
     else if (w.length >= 3) { const p = '#' + w + '#'; for (let i = 0; i < p.length - 2; i++) gs.push(p.slice(i, i + 3)); }
   });
   return gs;

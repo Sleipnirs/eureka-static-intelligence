@@ -62,11 +62,238 @@ def grams(text: str) -> list[str]:
     return gs
 
 
+
+# ═══ Loose-text ingestion: txt / md / docx → standard input JSON ═════════════
+# Merchants hand over whatever they have; the skill does the structuring.
+# Deterministic parsing, four strategies raced by yield:
+#   A. explicit markers   Q:/问： … A:/答：
+#   B. markdown headers   ## question \n answer…
+#   C. numbered items     1. question \n answer…
+#   D. question-mark blocks   any ?-ending line, following lines = answer
+# Optional header directives (before the first question):
+#   Brand/品牌: … · Tagline/副标题: … · Accent/主色: #hex · Welcome/欢迎: …
+#   Anchor/按钮: label | https://url · Tag/标签: … · Langs/语言: zh,en
+# Optional vocab section:  [vocab] / 词汇表:  then lines  term = english words
+# Mark a question mainline with a leading * or ★.
+
+CJK_RE = re.compile(r"[一-鿿]")
+
+
+def _docx_text(path: Path) -> str:
+    import zipfile
+    with zipfile.ZipFile(path) as z:
+        xml = z.read("word/document.xml").decode("utf-8", "ignore")
+    xml = re.sub(r"</w:p>", "\n", xml)
+    return re.sub(r"<[^>]+>", "", xml)
+
+
+def _lang_of(text: str) -> str:
+    cjk = len(CJK_RE.findall(text))
+    return "zh" if cjk > max(2, len(text) * 0.2) else "en"
+
+
+def _bi(text: str) -> dict:
+    lang = _lang_of(text)
+    other = "en" if lang == "zh" else "zh"
+    return {lang: text.strip(), other: text.strip()}  # mirror so the index always has .en
+
+
+HEAD_KEYS = {
+    "brand": "name", "品牌": "name", "名称": "name", "name": "name",
+    "tagline": "tagline", "副标题": "tagline",
+    "accent": "accent", "主色": "accent", "颜色": "accent",
+    "welcome": "welcome", "欢迎": "welcome", "欢迎语": "welcome",
+    "anchor": "anchor", "按钮": "anchor", "锚点": "anchor",
+    "tag": "tag", "标签": "tag",
+    "langs": "langs", "语言": "langs",
+}
+
+
+def parse_loose(text: str, fallback_name: str) -> dict:
+    lines = [ln.rstrip() for ln in text.replace("\r\n", "\n").split("\n")]
+    brand: dict = {}
+    vocab_zh: list = []
+    vocab_syn: dict = {}
+    warnings: list = []
+
+    # ── header directives ──
+    body_start = 0
+    for i, ln in enumerate(lines):
+        m = re.match(r"^\s*([A-Za-z\u4e00-\u9fff]{2,8})\s*[:：]\s*(.+)$", ln)
+        if m and HEAD_KEYS.get(m.group(1).strip().lower()) and not re.match(r"^\s*(q|问|a|答)\d*\s*[:：.]", ln, re.I):
+            key = HEAD_KEYS[m.group(1).strip().lower()]
+            val = m.group(2).strip()
+            if key == "anchor":
+                parts = [x.strip() for x in re.split(r"[|｜]", val, 1)]
+                brand["anchor"] = {"label": _bi(parts[0]), "action": "link" if len(parts) > 1 else "faq",
+                                   "target": parts[1] if len(parts) > 1 else ""}
+            elif key == "langs":
+                brand["langs"] = [x.strip() for x in re.split(r"[,，\s]+", val) if x.strip() in ("zh", "en")]
+            elif key in ("tagline", "welcome"):
+                brand[key] = _bi(val)
+            else:
+                brand[key] = val
+            body_start = i + 1
+        elif ln.strip():
+            break
+
+    # ── vocab section (anywhere) ──
+    body_lines = []
+    in_vocab = False
+    for ln in lines[body_start:]:
+        if re.match(r"^\s*(\[vocab\]|词汇表|vocabulary)\s*[:：]?\s*$", ln, re.I):
+            in_vocab = True
+            continue
+        if in_vocab:
+            m = re.match(r"^\s*(.+?)\s*[=＝]\s*(.+)$", ln)
+            if m:
+                a, b = m.group(1).strip(), m.group(2).strip()
+                if CJK_RE.search(a):
+                    vocab_zh.append([re.escape(a) if "|" not in a else a, b])
+                else:
+                    vocab_syn[a.lower()] = [x.strip() for x in re.split(r"[,，\s]+", b) if x.strip()]
+                continue
+            if ln.strip():
+                in_vocab = False
+        if not in_vocab:
+            body_lines.append(ln)
+    body = "\n".join(body_lines)
+
+    # ── strategy A: explicit Q/A markers ──
+    def strat_markers():
+        pairs, q, a, mode = [], [], [], None
+        for ln in body.split("\n"):
+            if re.match(r"^\s*[*★]?\s*(q\d*|问\d*)\s*[:：.、)]", ln, re.I):
+                if q and a:
+                    pairs.append(("\n".join(q), "\n".join(a)))
+                q, a, mode = [re.sub(r"^\s*([*★]?)\s*(q\d*|问\d*)\s*[:：.、)]\s*", r"\1", ln, flags=re.I)], [], "q"
+            elif re.match(r"^\s*(a\d*|答\d*)\s*[:：.、)]", ln, re.I):
+                a, mode = [re.sub(r"^\s*(a\d*|答\d*)\s*[:：.、)]\s*", "", ln, flags=re.I)], "a"
+            elif mode == "q" and ln.strip():
+                q.append(ln.strip())
+            elif mode == "a" and ln.strip():
+                a.append(ln.strip())
+        if q and a:
+            pairs.append(("\n".join(q), "\n".join(a)))
+        return pairs
+
+    # ── strategy B: markdown headers ──
+    def strat_md():
+        pairs, q, a = [], None, []
+        for ln in body.split("\n"):
+            m = re.match(r"^#{1,3}\s+(.+)$", ln)
+            if m:
+                if q and a:
+                    pairs.append((q, "\n".join(a)))
+                q, a = m.group(1).strip(), []
+            elif q is not None and ln.strip():
+                a.append(ln.strip())
+        if q and a:
+            pairs.append((q, "\n".join(a)))
+        return pairs
+
+    # ── strategy C: numbered items ──
+    def strat_num():
+        pairs, q, a = [], None, []
+        for ln in body.split("\n"):
+            m = re.match(r"^\s*[*★]?\s*\d+\s*[.、)]\s*(.+)$", ln)
+            if m:
+                if q and a:
+                    pairs.append((q, "\n".join(a)))
+                star = "*" if re.match(r"^\s*[*★]", ln) else ""
+                q, a = star + m.group(1).strip(), []
+            elif q is not None and ln.strip():
+                a.append(ln.strip())
+        if q and a:
+            pairs.append((q, "\n".join(a)))
+        return pairs
+
+    # ── strategy D: question-mark blocks ──
+    def strat_qmark():
+        pairs, q, a = [], None, []
+        for ln in body.split("\n"):
+            if re.search(r"[?？]\s*$", ln.strip()) and len(ln.strip()) < 80:
+                if q and a:
+                    pairs.append((q, "\n".join(a)))
+                q, a = ln.strip(), []
+            elif q is not None and ln.strip():
+                a.append(ln.strip())
+        if q and a:
+            pairs.append((q, "\n".join(a)))
+        return pairs
+
+    candidates = {"markers": strat_markers(), "markdown": strat_md(), "numbered": strat_num(), "qmark": strat_qmark()}
+    strategy, pairs = max(candidates.items(), key=lambda kv: len(kv[1]))
+    if len(pairs) < 5:
+        raise SystemExit(f"Could not detect enough Q&A pairs (best strategy '{strategy}' found {len(pairs)}). "
+                         "Format tips: 'Q:/A:' or '问：/答：' markers, '## question' headers, numbered items, "
+                         "or question lines ending with ?/？")
+
+    faq = []
+    langs_seen = []
+    for qtext, atext in pairs:
+        mainline = qtext.startswith("*") or qtext.startswith("★")
+        qtext = qtext.lstrip("*★ ").strip()
+        entry = {"q": _bi(qtext), "a": _bi(atext)}
+        if mainline:
+            entry["mainline"] = True
+        lang = _lang_of(qtext)
+        if lang not in langs_seen:
+            langs_seen.append(lang)
+        faq.append(entry)
+
+    name = brand.get("name") or fallback_name
+    langs = brand.get("langs") or langs_seen or ["en"]
+    default_welcome = {"zh": f"你好！我是{name}智能助手——常见问题都可以问我。需要什么帮助？",
+                       "en": f"Hi! I am the {name} assistant — ask me anything. How can I help?"}
+    anchor = brand.get("anchor")
+    if not anchor or not anchor.get("target"):
+        anchor = {"label": {"zh": "热门问题 ↗", "en": "Top question ↗"}, "action": "faq", "target": ""}
+    result = {
+        "brand": {
+            "name": name,
+            **({"tagline": brand["tagline"]} if brand.get("tagline") else {}),
+            "accent": brand.get("accent", "#0D9AFF"),
+            **({"tag": brand["tag"]} if brand.get("tag") else {}),
+            "langs": langs,
+            "welcome": brand.get("welcome", default_welcome),
+            "anchor": anchor,
+        },
+        "faq": faq,
+        "vocab": {"synonyms": vocab_syn, "zhTerms": vocab_zh, "smalltalkExtra": []},
+        "flow": None,
+        "toolbox": ["calculator", "json", "timestamp", "units", "textstats", "aeo"],
+    }
+    return result, strategy, warnings
+
+
+def ingest(src: Path) -> Path:
+    """txt/md/docx → <stem>.generated.json alongside the source; returns json path."""
+    ext = src.suffix.lower()
+    if ext == ".json":
+        return src
+    if ext == ".docx":
+        text = _docx_text(src)
+    elif ext in (".txt", ".md", ".markdown"):
+        text = src.read_text(encoding="utf-8", errors="replace")
+    elif ext == ".doc":
+        raise SystemExit("Legacy .doc is a binary format — please Save As .docx or .txt and rerun.")
+    else:
+        raise SystemExit(f"Unsupported input type: {ext} (accepted: .json .txt .md .docx)")
+    data, strategy, warns = parse_loose(text, src.stem.replace("_", " ").replace("-", " ").title())
+    out = src.with_suffix(".generated.json")
+    out.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"[ingest] strategy={strategy} · {len(data['faq'])} Q&A pairs · brand='{data['brand']['name']}' → {out}")
+    for w in warns:
+        print(f"[ingest][warn] {w}")
+    return out
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         print(__doc__)
         return 1
-    src = Path(sys.argv[1])
+    src = ingest(Path(sys.argv[1]))
     out_dir = Path(sys.argv[sys.argv.index("--out") + 1]) if "--out" in sys.argv else Path("out")
     data = json.loads(src.read_text(encoding="utf-8"))
 
@@ -141,6 +368,37 @@ def main() -> int:
     # vocab: stem the synonym map for the engine
     syn = {stem(k.lower()): [stem(v.lower()) for v in vs] for k, vs in (data.get("vocab", {}).get("synonyms") or {}).items()}
 
+    # zhTerms reverse-enrichment: every FAQ entry matching a vocab pattern
+    # gains the pattern's zh alternatives AND its en words as keywords —
+    # this is how "好吃/退订/小孩" style colloquial variants find their node
+    # even in a pure-Chinese pack. Merchants write alternatives with |.
+    # Conservative enrichment: alts need >=2 chars (single CJK chars are far
+    # too broad as keywords); English words are injected only for pure-zh
+    # packs (where q.en mirrors q.zh) — bilingual packs already carry real
+    # English in the index and extra en keywords just distort the balance.
+    mirrored = sum(1 for x in faq if x["q"].get("en") == x["q"].get("zh"))
+    pure_zh_pack = mirrored > len(faq) * 0.7
+    for term_pat, en_words in (data.get("vocab", {}).get("zhTerms") or []):
+        try:
+            pat = re.compile(term_pat)
+        except re.error:
+            continue
+        alts = [a for a in re.sub(r"[\\^$()\[\]?*+]", "", term_pat).split("|") if len(a) >= 2]
+        q_hits = [node for node in faq if pat.search(node["q"].get("zh", "") + node["q"].get("en", ""))]
+        a_hits = [node for node in faq if pat.search(node["a"].get("zh", ""))]
+        # question matches outrank answer matches — a term casually mentioned
+        # in another node's answer must not steal the keyword
+        hits = q_hits if q_hits else a_hits
+        if not hits or len(hits) > max(3, n // 3):
+            continue  # matches nothing or is ubiquitous — no discriminative value
+        for node in hits:
+            extra = list(alts)
+            if pure_zh_pack:
+                extra += [w for w in en_words.split() if len(w) > 2]
+            node["keywords"] = list(dict.fromkeys((node.get("keywords") or []) + extra))[:14]
+
+    if data["brand"].get("anchor", {}).get("action") == "faq" and not data["brand"]["anchor"].get("target"):
+        data["brand"]["anchor"]["target"] = quick[0]
     pack = {
         "brand": data["brand"],
         "faq": [{k: v for k, v in node.items() if k in ("id", "q", "a", "keywords", "children", "link", "more")} for node in faq],

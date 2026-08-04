@@ -464,20 +464,20 @@
         "payment installment"
       ],
       [
-        "牙疼|牙痛|疼|痛",
-        "pain hurt emergency"
-      ],
-      [
-        "紧急|马上|立刻",
-        "emergency"
-      ],
-      [
         "出血",
         "bleed gums"
       ],
       [
         "收费|费",
         "fee cost"
+      ],
+      [
+        "牙疼|牙痛",
+        "pain hurt"
+      ],
+      [
+        "紧急|急诊|急症",
+        "emergency"
       ]
     ],
     "smalltalkExtra": [
