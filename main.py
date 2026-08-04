@@ -109,6 +109,45 @@ HEAD_KEYS = {
 }
 
 
+DEFAULT_ACCENT = "#0D9AFF"
+COLOR_NAMES = {
+    # 中文常用色名 + 英文 CSS 色名（常见子集），商户随手写也能出正确品牌色
+    "红": "#D93025", "红色": "#D93025", "大红": "#D93025", "orange红": "#D93025",
+    "橙": "#E8710A", "橙色": "#E8710A", "橘色": "#E8710A", "橙红": "#E85D2F",
+    "黄": "#F0A800", "黄色": "#F0A800", "金色": "#C9A227", "金": "#C9A227",
+    "绿": "#188038", "绿色": "#188038", "墨绿": "#0B5C43", "青色": "#00897B",
+    "蓝": "#1A73E8", "蓝色": "#1A73E8", "深蓝": "#174EA6", "天蓝": "#0D9AFF",
+    "紫": "#7B1FA2", "紫色": "#7B1FA2", "粉": "#D81B60", "粉色": "#D81B60", "粉红": "#D81B60",
+    "棕": "#795548", "棕色": "#795548", "咖啡色": "#6D4C41", "黑": "#202124", "黑色": "#202124",
+    "red": "#D93025", "orange": "#E8710A", "yellow": "#F0A800", "gold": "#C9A227",
+    "green": "#188038", "teal": "#00897B", "blue": "#1A73E8", "navy": "#174EA6",
+    "purple": "#7B1FA2", "pink": "#D81B60", "brown": "#795548", "black": "#202124",
+    "crimson": "#DC143C", "coral": "#FF7F50", "tomato": "#FF6347", "salmon": "#FA8072",
+}
+
+def norm_accent(raw, warnings):
+    """Normalize a merchant-supplied accent into a valid #RRGGBB, or fall back.
+    Accepts: #RRGGBB, #RGB, hex without '#', zh/en color names, rgb(r,g,b)."""
+    if not raw:
+        return DEFAULT_ACCENT
+    v = str(raw).strip().strip('"').strip("'")
+    m = re.fullmatch(r"#?([0-9a-fA-F]{6})", v)
+    if m:
+        return "#" + m.group(1).upper()
+    m = re.fullmatch(r"#?([0-9a-fA-F]{3})", v)
+    if m:
+        return "#" + "".join(c * 2 for c in m.group(1)).upper()
+    m = re.fullmatch(r"rgb\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)", v, re.I)
+    if m:
+        r, g, b = (min(int(x), 255) for x in m.groups())
+        return f"#{r:02X}{g:02X}{b:02X}"
+    named = COLOR_NAMES.get(v.lower()) or COLOR_NAMES.get(v)
+    if named:
+        return named
+    warnings.append(f"accent '{raw}' not recognized — using default {DEFAULT_ACCENT}")
+    return DEFAULT_ACCENT
+
+
 def parse_loose(text: str, fallback_name: str) -> dict:
     lines = [ln.rstrip() for ln in text.replace("\r\n", "\n").split("\n")]
     brand: dict = {}
@@ -253,7 +292,7 @@ def parse_loose(text: str, fallback_name: str) -> dict:
         "brand": {
             "name": name,
             **({"tagline": brand["tagline"]} if brand.get("tagline") else {}),
-            "accent": brand.get("accent", "#0D9AFF"),
+            "accent": norm_accent(brand.get("accent"), warnings),
             **({"tag": brand["tag"]} if brand.get("tag") else {}),
             "langs": langs,
             "welcome": brand.get("welcome", default_welcome),
@@ -412,9 +451,10 @@ def main() -> int:
         "toolbox": data.get("toolbox") or ["calculator", "json", "timestamp", "units", "textstats", "aeo"],
     }
 
+    compile_warns: list = []
     html = TEMPLATE.read_text(encoding="utf-8")
     html = html.replace("%%BRAND_NAME%%", data["brand"]["name"])
-    html = html.replace("%%ACCENT%%", data["brand"].get("accent", "#0D9AFF"))
+    html = html.replace("%%ACCENT%%", norm_accent(data["brand"].get("accent"), compile_warns))
     html = html.replace("%%PACK_JSON%%", json.dumps(pack, ensure_ascii=False).replace("</", "<\\/"))
     html = html.replace("%%UI_SCRIPT%%", UI.read_text(encoding="utf-8"))
 
@@ -427,7 +467,7 @@ def main() -> int:
         "result": {"chatbox": str(out_path), "nodes": n, "quick": quick,
                    "auto_keywords": sum(1 for x in faq if x.get("keywords")),
                    "size_kb": round(out_path.stat().st_size / 1024, 1)},
-        "warnings": [],
+        "warnings": compile_warns,
     }, ensure_ascii=False, indent=2))
     return 0
 
