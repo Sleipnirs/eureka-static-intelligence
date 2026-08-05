@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>精密五金零件定制工厂 · Assistant</title>
+<style>
+:root {
+  --accent: #2F6FE8; --accent-d: color-mix(in srgb, var(--accent) 78%, #000);
+  --accent-l: color-mix(in srgb, var(--accent) 8%, #fff); --accent-m: color-mix(in srgb, var(--accent) 27%, #fff);
+  --stone: color-mix(in srgb, var(--accent) 14%, #fff);
+  --bg: #F6F9FD; --white: #fff; --off: #f1f7fc; --off2: #e8f2fb; --line: #d9e8f4; --line2: #c7dcea;
+  --ink: #101827; --ink2: #243044; --ink3: #5f6b82; --ink4: #8d98aa; --ink5: #b7c2d0;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace; --sans: -apple-system, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+  --sh-sm: 0 10px 26px color-mix(in srgb, var(--accent) 6%, transparent), 0 1px 3px rgba(16,24,39,.04);
+  --sh-md: 0 18px 44px color-mix(in srgb, var(--accent) 10%, transparent), 0 2px 8px rgba(16,24,39,.05);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 14px; }
+body { background: var(--bg); font-family: var(--sans); color: var(--ink); line-height: 1.6; }
+.esi-app { max-width: 1280px; margin: 0 auto; padding: 14px 28px 22px; height: 100vh; display: flex; flex-direction: column; gap: 12px; }
+.esi-header { flex: 0 0 auto; display: flex; align-items: center; gap: 9px; padding: 6px 14px 7px 22px; background: rgba(248,251,255,.92); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 26px color-mix(in srgb, var(--accent) 8%, transparent); backdrop-filter: blur(14px); }
+.esi-header > svg { width: 12px; height: 12px; color: var(--accent); flex: 0 0 auto; }
+.esi-brand { font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--ink2); letter-spacing: .01em; white-space: nowrap; }
+.esi-tag { font-family: var(--mono); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); background: var(--stone); border-radius: 3px; padding: 2px 6px; font-weight: 600; line-height: 1.2; }
+.esi-tagline { font-size: 10.5px; color: var(--ink4); margin-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.esi-spacer { flex: 1; }
+.esi-orb { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line2); background: var(--white); color: var(--ink3); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all .15s; font-family: var(--mono); font-size: 8.5px; font-weight: 600; }
+.esi-orb svg { width: 11px; height: 11px; }
+.esi-orb:hover { color: var(--accent); border-color: var(--accent-m); background: var(--accent-l); transform: translateY(-1px); }
+.esi-main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 316px; gap: 14px; }
+.esi-left { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.esi-chat { flex: 1; min-height: 0; overflow-y: auto; padding: 22px; background: linear-gradient(180deg, var(--accent-l) 0%, color-mix(in srgb, var(--accent-l) 55%, transparent) 100%); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--sh-sm); scroll-behavior: smooth; }
+.esi-chat::-webkit-scrollbar { width: 8px; }
+.esi-chat::-webkit-scrollbar-thumb { background: var(--accent-m); border-radius: 8px; }
+.esi-msg { display: flex; margin-bottom: 14px; }
+.esi-msg.user { justify-content: flex-end; }
+.esi-bubble { max-width: 78%; padding: 12px 16px; font-size: 14px; line-height: 1.65; color: var(--ink2); white-space: pre-wrap; word-break: break-word; }
+.esi-msg.bot .esi-bubble { background: var(--white); border: 1px solid var(--line); border-radius: 4px 16px 16px 16px; box-shadow: var(--sh-sm); }
+.esi-msg.user .esi-bubble { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 72%, #7fe3ff) 0%, var(--accent) 100%); color: #fff; border-radius: 16px 4px 16px 16px; box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 18%, transparent); }
+.esi-avatar { flex: 0 0 26px; width: 26px; height: 26px; margin-right: 10px; border-radius: 8px; background: var(--white); border: 1px solid var(--accent-m); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; font-weight: 600; align-self: flex-start; margin-top: 2px; }
+.esi-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 2px 0 16px 36px; }
+.esi-chip { font-family: var(--mono); font-size: 11px; padding: 5px 13px; border-radius: 20px; border: 1px solid var(--line2); color: var(--ink3); background: var(--white); cursor: pointer; transition: all .12s; }
+.esi-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-l); transform: translateY(-1px); }
+.esi-widget { margin: 2px 0 14px 36px; max-width: 78%; }
+.esi-card { background: var(--white); border: 1px solid var(--line); border-radius: 4px 16px 16px 16px; box-shadow: var(--sh-sm); padding: 12px 14px 13px; }
+.esi-card-title { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase; color: var(--ink3); border-bottom: 1px solid var(--off2); padding-bottom: 8px; margin-bottom: 9px; }
+.esi-composer { flex: 0 0 auto; background: var(--white); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--sh-md); padding: 12px 14px 10px; }
+.esi-composer:focus-within { border-color: var(--accent-m); }
+.esi-inrow { display: flex; align-items: flex-end; gap: 10px; }
+.esi-input { flex: 1; min-height: 24px; max-height: 160px; resize: none; border: 0; outline: none; background: transparent; font-family: var(--sans); font-size: 14px; line-height: 1.6; color: var(--ink); padding: 4px 2px; }
+.esi-input::placeholder { color: var(--ink4); }
+.esi-send { flex: 0 0 38px; width: 38px; height: 38px; border: 0; border-radius: 12px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 30%, #7ff3ff) -52%, var(--accent) 13%, color-mix(in srgb, var(--accent) 45%, #8fe6ff) 91%); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 28%, transparent); transition: all .18s; }
+.esi-send svg { width: 16px; height: 16px; }
+.esi-send:hover { transform: translateY(-1px); box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 36%, transparent); }
+.esi-foot { display: flex; align-items: center; gap: 7px; margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--off2); }
+.esi-mini { font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--off); color: var(--ink3); cursor: pointer; transition: all .12s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+.esi-mini:hover { color: var(--accent); border-color: var(--accent-m); background: var(--accent-l); }
+.esi-ver-wrap { position: relative; margin-left: auto; display: inline-flex; }
+.esi-version { font-family: var(--mono); font-size: 10px; color: var(--ink4); letter-spacing: .05em; display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; padding: 3px 6px; border-radius: 6px; cursor: pointer; transition: all .12s; }
+.esi-version:hover { color: var(--ink2); background: var(--off); }
+.esi-verdot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: esiblink 1.5s infinite; }
+@keyframes esiblink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+.esi-caret { width: 10px; height: 10px; opacity: .7; }
+.esi-ver-backdrop { position: fixed; inset: 0; z-index: 80; }
+.esi-ver-menu { position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 90; min-width: 128px; display: flex; flex-direction: column; gap: 2px; padding: 6px; background: var(--white); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--sh-md); }
+.esi-ver-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 11px; color: var(--ink2); padding: 6px 9px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; text-align: left; }
+.esi-ver-item svg { width: 11px; height: 11px; color: var(--accent); }
+.esi-ver-item:hover { background: var(--accent-l); }
+.esi-ver-item.on { color: var(--accent); font-weight: 600; }
+.esi-ver-item:disabled { color: var(--ink5); cursor: default; }
+.esi-ver-item:disabled:hover { background: transparent; }
+.esi-rail { min-height: 0; display: grid; grid-template-rows: 1fr 1fr; gap: 12px; }
+.esi-panel { min-height: 0; display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--sh-sm); overflow: hidden; }
+.esi-phead { flex: 0 0 auto; display: flex; align-items: center; gap: 7px; padding: 9px 13px 8px; border-bottom: 1px solid var(--off2); font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase; color: var(--ink3); }
+.esi-phead svg { width: 12px; height: 12px; color: var(--accent); flex: 0 0 auto; }
+.esi-pbody { flex: 1; min-height: 0; overflow-y: auto; padding: 9px 11px; }
+.esi-pbody::-webkit-scrollbar { width: 6px; }
+.esi-pbody::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 6px; }
+.esi-qq { display: block; width: 100%; text-align: left; font-family: var(--sans); font-size: 12.5px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 9px; padding: 8px 11px; margin-bottom: 7px; cursor: pointer; transition: all .12s; line-height: 1.45; }
+.esi-qq:hover { border-color: var(--accent-m); background: var(--accent-l); color: var(--ink); transform: translateX(2px); }
+.esi-tool { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font-family: var(--sans); font-size: 12.5px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 9px; padding: 8px 11px; margin-bottom: 7px; cursor: pointer; transition: all .12s; }
+.esi-tool:hover { border-color: var(--accent-m); background: var(--accent-l); transform: translateX(2px); }
+.esi-tool.dis { opacity: .45; cursor: default; }
+.esi-tool.dis:hover { border-color: var(--line); background: var(--off); transform: none; }
+.esi-tool-ico { font-size: 13px; width: 18px; text-align: center; }
+.esi-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border: 1px solid var(--off2); background: var(--off); border-radius: 8px; margin-bottom: 6px; font-size: 12px; }
+.esi-meta { font-family: var(--mono); font-size: 10px; color: var(--ink4); }
+.esi-ti { width: 100%; font-family: var(--mono); font-size: 12px; color: var(--ink); background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; outline: none; margin-bottom: 7px; }
+.esi-ti:focus { border-color: var(--accent-m); }
+.esi-ta { width: 100%; font-family: var(--mono); font-size: 11px; color: var(--ink2); background: var(--off); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; outline: none; resize: vertical; margin-bottom: 7px; }
+.esi-ta:focus { border-color: var(--accent-m); }
+.esi-btn { font-family: var(--sans); font-size: 11px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--off); color: var(--ink3); cursor: pointer; margin-right: 5px; transition: all .12s; }
+.esi-btn:hover { color: var(--accent); border-color: var(--accent-m); }
+.esi-btn.pri { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, #6fe0ff), var(--accent)); color: #fff; border: 0; font-weight: 600; box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 22%, transparent); }
+.esi-hash { font-family: var(--mono); font-size: 10px; color: var(--accent-d); word-break: break-all; background: var(--white); border: 1px solid var(--line); border-radius: 7px; padding: 6px 8px; margin-top: 5px; }
+.esi-grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.esi-key { font-family: var(--mono); font-size: 13px; padding: 9px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--white); color: var(--ink2); cursor: pointer; transition: all .1s; }
+.esi-key:hover { border-color: var(--accent-m); background: var(--accent-l); transform: translateY(-1px); }
+.esi-key.op { background: var(--off); color: var(--accent-d); }
+.esi-key.eq { grid-column: span 2; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, #6fe0ff), var(--accent)); color: #fff; border: 0; font-weight: 700; }
+.esi-linkcard { display: flex; gap: 10px; align-items: center; }
+.esi-linkcard img { width: 22px; height: 22px; }
+.esi-lc-body { flex: 1; min-width: 0; }
+.esi-lc-d { font-size: 11.5px; color: var(--ink3); line-height: 1.5; }
+.esi-lc-q { font-family: var(--mono); font-size: 10px; color: var(--accent-d); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+.esi-open { flex: 0 0 auto; font-family: var(--sans); font-size: 11.5px; font-weight: 600; color: #fff; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, #6fe0ff), var(--accent)); border: 0; border-radius: 9px; padding: 8px 13px; cursor: pointer; box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 22%, transparent); }
+.esi-dark { --bg: #0b1322; --white: #111a2c; --off: #0d1524; --off2: #1c2740; --line: #223353; --line2: #2e4468; --ink: #e9f1fc; --ink2: #d2deee; --ink3: #94a6c2; --ink4: #687a9b; --ink5: #495b78; --accent-l: #11233b; --accent-m: #1e4b75; --stone: #16283f; }
+.esi-dark .esi-header { background: rgba(13,21,37,.92); }
+.esi-dark .esi-chat { background: linear-gradient(180deg, #0f1c31 0%, rgba(12,20,35,.72) 100%); }
+@media (max-width: 860px) { .esi-app { height: auto; } .esi-main { grid-template-columns: 1fr; } .esi-chat { min-height: 420px; } .esi-rail { grid-template-rows: none; grid-template-columns: 1fr 1fr; } .esi-panel { min-height: 220px; max-height: 320px; } }
+@media (max-width: 560px) { .esi-app { padding: 10px 14px 18px; } .esi-rail { grid-template-columns: 1fr; } .esi-bubble { max-width: 90%; } .esi-widget { max-width: 94%; margin-left: 12px; } }
+</style>
+</head>
+<body>
+<div class="esi-app" id="app"></div>
+<script type="application/json" id="esi-pack">{"brand": {"name": "精密五金零件定制工厂", "tagline": {"zh": "CNC加工 · 冲压钣金 · 表面处理 · 按图定制", "en": "CNC加工 · 冲压钣金 · 表面处理 · 按图定制"}, "accent": "#2F6FE8", "langs": ["zh"], "welcome": {"zh": "您好！这里是五金零件定制客服。点下方常见问题，或直接把您的需求发给我（图纸/材料/数量/交期）。", "en": "您好！这里是五金零件定制客服。点下方常见问题，或直接把您的需求发给我（图纸/材料/数量/交期）。"}, "anchor": {"label": {"zh": "热门问题 ↗", "en": "Top question ↗"}, "action": "faq", "target": "你们支持哪些加工工艺"}}, "faq": [{"q": {"zh": "你们主要生产什么产品？", "en": "你们主要生产什么产品？"}, "a": {"zh": "我们主要提供定制五金及精密零件制造服务，包括 CNC 车削件、CNC 铣削件、冲压件、钣金件和其他非标零部件。具体能否加工，需要结合图纸、材料、尺寸、公差和数量进行评估。", "en": "我们主要提供定制五金及精密零件制造服务，包括 CNC 车削件、CNC 铣削件、冲压件、钣金件和其他非标零部件。具体能否加工，需要结合图纸、材料、尺寸、公差和数量进行评估。"}, "id": "你们主要生产什么产品", "keywords": ["么产", "主要", "要生", "们主", "产什", "什么"], "children": ["你们支持哪些加工工艺", "为什么选择你们"]}, {"q": {"zh": "你们支持 OEM 和 ODM 吗？", "en": "你们支持 OEM 和 ODM 吗？"}, "a": {"zh": "支持按客户图纸或样品进行 OEM 定制；如项目需要，也可评估提供结构优化、材料建议和可制造性分析等 ODM 或工程协同服务。具体服务范围以项目确认为准。", "en": "支持按客户图纸或样品进行 OEM 定制；如项目需要，也可评估提供结构优化、材料建议和可制造性分析等 ODM 或工程协同服务。具体服务范围以项目确认为准。"}, "id": "你们支持-oem-和-odm-吗", "keywords": ["odm", "oem", "们支", "OEM", "ODM", "代工", "贴牌", "来料加工"], "children": ["你们支持哪些加工工艺", "为什么选择你们"]}, {"q": {"zh": "可以按照图纸加工吗？", "en": "可以按照图纸加工吗？"}, "a": {"zh": "可以。通常可接收 PDF、DWG、DXF 等 2D 图纸，以及 STEP、STP、IGES 等 3D 文件。为准确报价，请同时提供材料、数量、表面处理、公差和其他特殊要求。", "en": "可以。通常可接收 PDF、DWG、DXF 等 2D 图纸，以及 STEP、STP、IGES 等 3D 文件。为准确报价，请同时提供材料、数量、表面处理、公差和其他特殊要求。"}, "id": "可以按照图纸加工吗", "keywords": ["照图", "以按", "按照", "纸加", "工吗", "图纸", "CAD", "dwg", "dxf", "step", "stp", "iges", "3D", "三维"], "children": ["如何获取报价", "可以加工哪些材料"]}, {"q": {"zh": "没有图纸，可以根据样品生产吗？", "en": "没有图纸，可以根据样品生产吗？"}, "a": {"zh": "可以评估。我们可根据实物样品进行测绘、建模和工艺分析，但需要先确认样品状态、关键尺寸、材料、功能要求及知识产权授权。重要尺寸和验收标准仍需双方书面确认。", "en": "可以评估。我们可根据实物样品进行测绘、建模和工艺分析，但需要先确认样品状态、关键尺寸、材料、功能要求及知识产权授权。重要尺寸和验收标准仍需双方书面确认。"}, "id": "没有图纸-可以根据样品生产吗", "keywords": ["没有", "以根", "样品", "品生", "有图", "根据", "打样", "试样", "做个样", "先做一个", "手板", "首样", "sample", "prototype"], "children": ["可以加急生产吗", "可以先打样吗"]}, {"q": {"zh": "最小起订量是多少？", "en": "最小起订量是多少？"}, "a": {"zh": "最小起订量取决于材料、工艺、结构复杂度和是否需要模具或专用治具。打样和 CNC 项目通常可支持较小数量；冲压、铸造或需要开模的项目可能有更高起订量，请提供资料后确认。", "en": "最小起订量取决于材料、工艺、结构复杂度和是否需要模具或专用治具。打样和 CNC 项目通常可支持较小数量；冲压、铸造或需要开模的项目可能有更高起订量，请提供资料后确认。"}, "id": "最小起订量是多少", "keywords": ["最小", "小起", "量是", "起订", "订量", "是多", "起订量", "MOQ", "最少做多少", "最小数量", "少量", "小批量", "几个也能做吗", "moq"], "children": ["打样需要多久", "报价通常需要多久"]}, {"q": {"zh": "可以先打样吗？", "en": "可以先打样吗？"}, "a": {"zh": "可以。我们通常建议新项目先制作样品或小批量试产，待客户确认尺寸、外观和功能后，再安排批量生产。", "en": "可以。我们通常建议新项目先制作样品或小批量试产，待客户确认尺寸、外观和功能后，再安排批量生产。"}, "id": "可以先打样吗", "keywords": ["以先", "样吗", "先打", "打样", "样品", "试样", "做个样", "先做一个", "手板", "首样", "sample", "prototype"], "children": ["第一次合作的流程是什么", "批量生产交期多久"]}, {"q": {"zh": "打样需要多久？", "en": "打样需要多久？"}, "a": {"zh": "常规样品通常需要约 3—10 个工作日；复杂结构、特殊材料、专用刀具、模具或外协表面处理可能延长周期。准确交期需在技术评估和材料确认后提供。", "en": "常规样品通常需要约 3—10 个工作日；复杂结构、特殊材料、专用刀具、模具或外协表面处理可能延长周期。准确交期需在技术评估和材料确认后提供。"}, "id": "打样需要多久", "keywords": ["样需", "需要", "要多", "打样", "多久", "样品", "试样", "做个样", "先做一个", "手板", "首样", "sample", "prototype", "交期"], "children": ["报价通常需要多久", "批量生产交期多久"]}, {"q": {"zh": "批量生产交期多久？", "en": "批量生产交期多久？"}, "a": {"zh": "常规批量订单通常约为 2—6 周，实际周期取决于订单数量、工艺复杂度、材料供应、表面处理和当前排产。订单确认后，我们会提供预计交期。", "en": "常规批量订单通常约为 2—6 周，实际周期取决于订单数量、工艺复杂度、材料供应、表面处理和当前排产。订单确认后，我们会提供预计交期。"}, "id": "批量生产交期多久", "keywords": ["产交", "交期", "量生", "批量", "期多", "多久", "交货", "货期", "工期", "周期", "多长时间", "啥时候", "什么时候好", "要等多久"], "children": ["打样需要多久", "报价通常需要多久"]}, {"q": {"zh": "可以加急生产吗？", "en": "可以加急生产吗？"}, "a": {"zh": "可以根据材料库存、设备负荷、工艺路线和外协周期评估加急安排。加急可行性、交期及可能产生的费用需要由销售和生产团队确认。", "en": "可以根据材料库存、设备负荷、工艺路线和外协周期评估加急安排。加急可行性、交期及可能产生的费用需要由销售和生产团队确认。"}, "id": "可以加急生产吗", "keywords": ["加急", "急生", "产吗", "以加", "急单", "快点", "着急", "尽快", "催一下", "赶货", "rush", "urgent", "expedite"], "children": ["没有图纸-可以根据样品生产吗", "可以加工哪些材料"]}, {"q": {"zh": "你们支持哪些加工工艺？", "en": "你们支持哪些加工工艺？"}, "a": {"zh": "常见工艺包括 CNC 车削、CNC 铣削、冲压、激光切割、折弯、焊接、钻孔、攻牙和磨削等。不同产品可能需要组合工艺，具体方案需根据图纸评估。", "en": "常见工艺包括 CNC 车削、CNC 铣削、冲压、激光切割、折弯、焊接、钻孔、攻牙和磨削等。不同产品可能需要组合工艺，具体方案需根据图纸评估。"}, "id": "你们支持哪些加工工艺", "keywords": ["工工", "工艺", "些加", "们支", "加工", "加工方式", "CNC", "车削", "铣削", "冲压", "钣金", "激光", "折弯", "焊接"], "children": ["你们主要生产什么产品", "支持哪些付款方式"]}, {"q": {"zh": "可以加工哪些材料？", "en": "可以加工哪些材料？"}, "a": {"zh": "常见材料包括不锈钢、碳钢、合金钢、铝合金、铜、黄铜及部分工程塑料；钛合金、工具钢或其他特殊材料可单独评估。客户如有指定牌号或材料标准，请在询价时注明。", "en": "常见材料包括不锈钢、碳钢、合金钢、铝合金、铜、黄铜及部分工程塑料；钛合金、工具钢或其他特殊材料可单独评估。客户如有指定牌号或材料标准，请在询价时注明。"}, "id": "可以加工哪些材料", "keywords": ["工哪", "材料", "些材", "以加", "加工", "材质", "牌号", "用什么料", "不锈钢", "铝件", "铜件", "碳钢", "material"], "children": ["可以按照图纸加工吗", "可以加急生产吗"]}, {"q": {"zh": "支持哪些表面处理？", "en": "支持哪些表面处理？"}, "a": {"zh": "常见表面处理包括阳极氧化、电镀、镀锌、镀镍、发黑、钝化、喷砂、抛光、喷粉和喷漆等。处理方式需结合基材、颜色、膜厚、外观、耐腐蚀要求及适用标准确认。", "en": "常见表面处理包括阳极氧化、电镀、镀锌、镀镍、发黑、钝化、喷砂、抛光、喷粉和喷漆等。处理方式需结合基材、颜色、膜厚、外观、耐腐蚀要求及适用标准确认。"}, "id": "支持哪些表面处理", "keywords": ["面处", "些表", "表面", "处理", "表面处理", "表处", "电镀", "阳极", "氧化", "喷涂", "喷粉", "喷漆", "发黑", "钝化"], "children": ["支持哪些付款方式", "你们支持哪些加工工艺"]}, {"q": {"zh": "产品精度可以达到多少？", "en": "产品精度可以达到多少？"}, "a": {"zh": "可实现的精度取决于材料、尺寸、结构、设备、工艺和检测条件。部分精密特征可评估达到较严格公差，但不能对所有产品统一承诺。请提供标注完整的图纸，由工程人员确认关键尺寸和可制造性。", "en": "可实现的精度取决于材料、尺寸、结构、设备、工艺和检测条件。部分精密特征可评估达到较严格公差，但不能对所有产品统一承诺。请提供标注完整的图纸，由工程人员确认关键尺寸和可制造性。"}, "id": "产品精度可以达到多少", "keywords": ["达到", "到多", "度可", "精度", "品精", "以达", "公差", "误差", "尺寸精度", "做得准", "tolerance", "precision", "accuracy"], "children": ["最小起订量是多少", "没有图纸-可以根据样品生产吗"]}, {"q": {"zh": "产品会进行质量检测吗？", "en": "产品会进行质量检测吗？"}, "a": {"zh": "会。通常包括来料检验、首件确认、过程巡检、成品检验和出货检查。检验项目及抽样标准可根据图纸、订单要求和双方确认的质量标准执行。", "en": "会。通常包括来料检验、首件确认、过程巡检、成品检验和出货检查。检验项目及抽样标准可根据图纸、订单要求和双方确认的质量标准执行。"}, "id": "产品会进行质量检测吗", "keywords": ["行质", "量检", "会进", "进行", "品会", "测吗", "检测", "质检", "检验", "品检", "报告", "检测报告", "尺寸报告", "QC"], "children": ["可以提供尺寸检测报告吗", "收到产品后发现质量问题怎么办"]}, {"q": {"zh": "可以提供尺寸检测报告吗？", "en": "可以提供尺寸检测报告吗？"}, "a": {"zh": "可以根据项目要求提供尺寸检验报告、首件检验报告或其他约定的质量文件。请在报价前说明报告格式、检测项目、抽样数量和是否需要第三方检测，以便确认费用与周期。", "en": "可以根据项目要求提供尺寸检验报告、首件检验报告或其他约定的质量文件。请在报价前说明报告格式、检测项目、抽样数量和是否需要第三方检测，以便确认费用与周期。"}, "id": "可以提供尺寸检测报告吗", "keywords": ["尺寸", "供尺", "报告", "告吗", "测报", "寸检", "检测", "质检", "检验", "品检", "检测报告", "尺寸报告", "QC", "quality"], "children": ["产品会进行质量检测吗", "可以提供出口包装吗"]}, {"q": {"zh": "你们有哪些质量管理体系或认证？", "en": "你们有哪些质量管理体系或认证？"}, "a": {"zh": "质量体系和认证情况应以工厂当前有效证书为准。请告知项目所需的认证或行业标准，我们会提供可核验资料，并由相关人员确认该项目是否符合要求。", "en": "质量体系和认证情况应以工厂当前有效证书为准。请告知项目所需的认证或行业标准，我们会提供可核验资料，并由相关人员确认该项目是否符合要求。"}, "id": "你们有哪些质量管理体系或认证", "keywords": ["些质", "体系", "有哪", "们有", "系或", "或认", "认证", "证书", "ISO", "资质", "符合标准", "certification", "quality", "system"], "children": ["为什么选择你们", "收到产品后发现质量问题怎么办"]}, {"q": {"zh": "可以签署保密协议吗？", "en": "可以签署保密协议吗？"}, "a": {"zh": "可以。项目开始前可评估并签署保密协议，以保护客户的图纸、样品、技术资料和商业信息。双方应明确保密范围、期限及资料使用方式。", "en": "可以。项目开始前可评估并签署保密协议，以保护客户的图纸、样品、技术资料和商业信息。双方应明确保密范围、期限及资料使用方式。"}, "id": "可以签署保密协议吗", "keywords": ["议吗", "密协", "协议", "签署", "署保", "保密", "NDA", "保密协议", "签保密", "不外泄", "nda", "confidential", "agreement"], "children": ["你们支持-oem-和-odm-吗", "接受长期合作和定期供货吗"]}, {"q": {"zh": "你们可以出口到哪些国家或地区？", "en": "你们可以出口到哪些国家或地区？"}, "a": {"zh": "可根据产品类别、贸易条款、物流条件和目的地法规评估出口安排。请提供收货国家或地区、产品信息及期望运输方式，以便确认报关、包装和交付要求。", "en": "可根据产品类别、贸易条款、物流条件和目的地法规评估出口安排。请提供收货国家或地区、产品信息及期望运输方式，以便确认报关、包装和交付要求。"}, "id": "你们可以出口到哪些国家或地区", "keywords": ["国家", "们可", "到哪", "口到", "些国", "家或", "出口", "外贸", "海外", "国外", "出口到", "报关", "清关", "export"], "children": ["支持哪些运输方式", "可以提供出口包装吗"]}, {"q": {"zh": "支持哪些运输方式？", "en": "支持哪些运输方式？"}, "a": {"zh": "通常可安排国际快递、空运、海运、陆运或客户指定的物流服务。运输方式可根据货物重量、体积、时效、成本和目的地选择。", "en": "通常可安排国际快递、空运、海运、陆运或客户指定的物流服务。运输方式可根据货物重量、体积、时效、成本和目的地选择。"}, "id": "支持哪些运输方式", "keywords": ["输方", "运输", "些运", "方式", "物流", "发货", "快递", "空运", "海运", "陆运", "寄出", "运费", "shipping", "logistics"], "children": ["你们可以出口到哪些国家或地区", "支持哪些付款方式"]}, {"q": {"zh": "可以提供出口包装吗？", "en": "可以提供出口包装吗？"}, "a": {"zh": "可以。可根据产品特性和运输方式评估使用防锈、防潮、防碰撞、独立分隔、纸箱或木箱等包装。若客户有指定包装标准、标签或熏蒸要求，请提前说明。", "en": "可以。可根据产品特性和运输方式评估使用防锈、防潮、防碰撞、独立分隔、纸箱或木箱等包装。若客户有指定包装标准、标签或熏蒸要求，请提前说明。"}, "id": "可以提供出口包装吗", "keywords": ["供出", "口包", "装吗", "以提", "提供", "出口", "外贸", "海外", "国外", "出口到", "报关", "清关", "export", "overseas"], "children": ["可以定制产品包装吗", "你们可以出口到哪些国家或地区"]}, {"q": {"zh": "如何获取报价？", "en": "如何获取报价？"}, "a": {"zh": "请提供 2D 图纸或 3D 模型，并注明材料牌号、订单数量、表面处理、公差、检测、包装、收货地点和期望交期。信息越完整，报价和交期评估越准确。", "en": "请提供 2D 图纸或 3D 模型，并注明材料牌号、订单数量、表面处理、公差、检测、包装、收货地点和期望交期。信息越完整，报价和交期评估越准确。"}, "id": "如何获取报价", "keywords": ["获取", "取报", "何获", "报价", "如何", "询价", "价格", "多少钱", "多少米", "价钱", "费用", "贵不贵", "能便宜点", "成本"], "children": ["批量生产交期多久", "如何联系销售团队"]}, {"q": {"zh": "报价通常需要多久？", "en": "报价通常需要多久？"}, "a": {"zh": "资料完整的常规零件通常可在 1 个工作日左右反馈；复杂组件、特殊工艺或需供应商协同评估的项目可能需要 1—3 个工作日或更久。收到资料后，我们会告知预计报价时间。", "en": "资料完整的常规零件通常可在 1 个工作日左右反馈；复杂组件、特殊工艺或需供应商协同评估的项目可能需要 1—3 个工作日或更久。收到资料后，我们会告知预计报价时间。"}, "id": "报价通常需要多久", "keywords": ["价通", "通常", "常需", "报价", "需要", "要多", "询价", "价格", "多少钱", "多少米", "价钱", "费用", "贵不贵", "能便宜点"], "children": ["打样需要多久", "批量生产交期多久"]}, {"q": {"zh": "支持哪些付款方式？", "en": "支持哪些付款方式？"}, "a": {"zh": "常见方式包括银行电汇等。币种、订金比例、尾款节点、手续费和账期需根据订单金额、合作阶段及双方确认的商务条款确定。", "en": "常见方式包括银行电汇等。币种、订金比例、尾款节点、手续费和账期需根据订单金额、合作阶段及双方确认的商务条款确定。"}, "id": "支持哪些付款方式", "keywords": ["些付", "付款", "款方", "方式", "收款", "账期", "定金", "订金", "首款", "尾款", "电汇", "TT", "怎么付钱", "结算"], "children": ["你们支持哪些加工工艺", "支持哪些运输方式"]}, {"q": {"zh": "接受长期合作和定期供货吗？", "en": "接受长期合作和定期供货吗？"}, "a": {"zh": "欢迎长期合作。可根据客户预测、订单计划和质量要求，评估框架协议、分批交付、安全库存或持续降本等合作方式，具体方案需双方协商确认。", "en": "欢迎长期合作。可根据客户预测、订单计划和质量要求，评估框架协议、分批交付、安全库存或持续降本等合作方式，具体方案需双方协商确认。"}, "id": "接受长期合作和定期供货吗", "keywords": ["货吗", "作和", "定期", "接受", "供货", "和定", "长期合作", "批量", "框架协议", "定期供货", "返单", "翻单", "大货", "bulk"], "children": ["第一次合作的流程是什么", "你们支持哪些加工工艺"]}, {"q": {"zh": "订单生产期间可以查看进度吗？", "en": "订单生产期间可以查看进度吗？"}, "a": {"zh": "可以。订单执行过程中可按约定节点反馈材料、加工、表面处理、检验和发货进度。如需要照片、视频或固定频率的进度报告，请在下单时说明。", "en": "可以。订单执行过程中可按约定节点反馈材料、加工、表面处理、检验和发货进度。如需要照片、视频或固定频率的进度报告，请在下单时说明。"}, "id": "订单生产期间可以查看进度吗", "keywords": ["间可", "以查", "期间", "进度", "单生", "订单", "订单进度", "做到哪了", "生产进度", "跟单", "order", "progress", "status"], "children": ["可以提供尺寸检测报告吗", "产品会进行质量检测吗"]}, {"q": {"zh": "收到产品后发现质量问题怎么办？", "en": "收到产品后发现质量问题怎么办？"}, "a": {"zh": "请尽快提供订单号、零件编号、问题描述、数量、照片、视频和检测数据，并妥善保留问题产品。我们会安排质量人员调查原因，并根据双方确认的质量标准和责任情况协商返工、补货、退换或其他合理处理方案。", "en": "请尽快提供订单号、零件编号、问题描述、数量、照片、视频和检测数据，并妥善保留问题产品。我们会安排质量人员调查原因，并根据双方确认的质量标准和责任情况协商返工、补货、退换或其他合理处理方案。"}, "id": "收到产品后发现质量问题怎么办", "keywords": ["收到", "现质", "题怎", "后发", "品后", "么办", "质量问题", "不良", "坏了", "尺寸不对", "返工", "退换", "索赔", "投诉"], "children": ["产品会进行质量检测吗", "可以提供尺寸检测报告吗"]}, {"q": {"zh": "可以定制产品包装吗？", "en": "可以定制产品包装吗？"}, "a": {"zh": "可以评估定制标签、条码、LOGO、包装袋、内托和包装盒等。请提供设计文件、材质、尺寸、数量及合规要求；定制包装可能涉及最低订购量和额外费用。", "en": "可以评估定制标签、条码、LOGO、包装袋、内托和包装盒等。请提供设计文件、材质、尺寸、数量及合规要求；定制包装可能涉及最低订购量和额外费用。"}, "id": "可以定制产品包装吗", "keywords": ["品包", "定制", "以定", "制产", "装吗", "包装", "按图", "按样", "非标", "来图加工", "custom", "made", "木箱", "纸箱"], "children": ["可以提供出口包装吗", "可以提供尺寸检测报告吗"]}, {"q": {"zh": "如何联系销售团队？", "en": "如何联系销售团队？"}, "a": {"zh": "可通过工厂官网、电子邮件、电话或在线客服提交需求。为便于快速处理，请一并提供公司名称、联系人、产品资料、预计数量、目标交期和收货地区。正式使用本 FAQ 时，请将此处替换为工厂的真实联系方式。", "en": "可通过工厂官网、电子邮件、电话或在线客服提交需求。为便于快速处理，请一并提供公司名称、联系人、产品资料、预计数量、目标交期和收货地区。正式使用本 FAQ 时，请将此处替换为工厂的真实联系方式。"}, "id": "如何联系销售团队", "keywords": ["系销", "何联", "联系", "销售", "售团", "团队", "联系方式", "电话", "微信", "邮箱", "业务", "找谁", "contact", "sales"], "children": ["如何获取报价", "为什么选择你们"]}, {"q": {"zh": "第一次合作的流程是什么？", "en": "第一次合作的流程是什么？"}, "a": {"zh": "通常流程为：提交需求和图纸 → 技术评估 → 报价及商务确认 → 打样或小批量试产 → 样品确认 → 批量生产 → 质量检验 → 包装发货 → 售后与持续供货。不同项目可根据实际情况调整。", "en": "通常流程为：提交需求和图纸 → 技术评估 → 报价及商务确认 → 打样或小批量试产 → 样品确认 → 批量生产 → 质量检验 → 包装发货 → 售后与持续供货。不同项目可根据实际情况调整。"}, "id": "第一次合作的流程是什么", "keywords": ["一次", "作的", "的流", "程是", "是什", "流程"], "children": ["可以先打样吗", "批量生产交期多久"]}, {"q": {"zh": "为什么选择你们？", "en": "为什么选择你们？"}, "a": {"zh": "我们的目标是通过定制制造能力、工程协同、过程质量控制、灵活的订单支持和及时沟通，为客户提供稳定的五金零件供应方案。具体优势应结合工厂的真实设备、案例、质量数据、认证和交付表现向客户说明。", "en": "我们的目标是通过定制制造能力、工程协同、过程质量控制、灵活的订单支持和及时沟通，为客户提供稳定的五金零件供应方案。具体优势应结合工厂的真实设备、案例、质量数据、认证和交付表现向客户说明。"}, "id": "为什么选择你们", "keywords": ["么选", "择你", "为什", "选择", "什么"], "children": ["你们主要生产什么产品", "你们支持-oem-和-odm-吗"]}], "quick": ["你们支持哪些加工工艺", "打样需要多久", "批量生产交期多久", "可以提供尺寸检测报告吗", "你们主要生产什么产品", "第一次合作的流程是什么", "报价通常需要多久", "没有图纸-可以根据样品生产吗", "如何获取报价", "你们可以出口到哪些国家或地区"], "vocab": {"synonymsStemmed": {}, "zhTerms": [["报价|询价|价格|多少钱|多少米|价钱|费用|贵不贵|能便宜点|成本", "quote price cost"], ["打样|样品|试样|做个样|先做一个|手板|首样", "sample prototype"], ["交期|交货|货期|工期|周期|多久|多长时间|啥时候|什么时候好|要等多久", "lead time delivery"], ["加急|急单|快点|着急|尽快|催一下|赶货", "rush urgent expedite"], ["定制|按图|按样|非标|来图加工", "custom made"], ["OEM|ODM|代工|贴牌|来料加工", "oem odm"], ["图纸|图|CAD|dwg|dxf|step|stp|iges|3D|三维|模型|档案", "drawing cad model file"], ["材料|材质|牌号|用什么料|不锈钢|铝件|铜件|碳钢", "material"], ["表面处理|表处|电镀|阳极|氧化|喷涂|喷粉|喷漆|发黑|钝化|抛光|喷砂|镀锌|镀镍", "surface finish plating coating"], ["精度|公差|误差|尺寸精度|做得准", "tolerance precision accuracy"], ["起订量|MOQ|最少做多少|最小数量|少量|小批量|几个也能做吗", "moq minimum order quantity"], ["工艺|加工方式|CNC|车削|铣削|冲压|钣金|激光|折弯|焊接|攻牙|磨削", "process machining"], ["付款|收款|账期|定金|订金|首款|尾款|电汇|TT|怎么付钱|结算", "payment terms"], ["检测|质检|检验|品检|报告|检测报告|尺寸报告|QC", "quality inspection report"], ["认证|体系|证书|ISO|资质|符合标准", "certification quality system"], ["保密|NDA|保密协议|签保密|不外泄", "nda confidential agreement"], ["出口|外贸|海外|国外|出口到|报关|清关", "export overseas customs"], ["物流|运输|发货|快递|空运|海运|陆运|寄出|运费", "shipping logistics freight"], ["包装|木箱|纸箱|防锈|防潮|真空包装|出口包装", "packaging box"], ["长期合作|批量|框架协议|定期供货|返单|翻单|大货", "bulk long-term supply"], ["进度|订单进度|做到哪了|生产进度|跟单", "order progress status"], ["质量问题|不良|坏了|尺寸不对|返工|退换|索赔|投诉", "quality issue defect rework"], ["联系|联系方式|电话|微信|邮箱|销售|业务|找谁", "contact sales"]], "smalltalkExtra": []}, "flow": null, "toolbox": ["calculator", "json", "timestamp", "units", "textstats", "aeo"]}</script>
+<script>
+/* ══════════════ Eureka Static Intelligence · Engine (vanilla, no deps) ══════════════ */
+/* ENGINE_START */
+const PACK = JSON.parse(document.getElementById('esi-pack').textContent);
+const NODES = {}; PACK.faq.forEach(n => NODES[n.id] = n);
+const IDS = PACK.faq.map(n => n.id);
+const QUICK = PACK.quick;
+const LANGS = PACK.brand.langs;
+let LOC = LANGS[0];
+
+const STOP = new Set(('the a an is are was be been do does did can could will would should what when where which who why how i my me we our you your it its this that these to of for in on at by and or but if with about into from have has let tell know show give explain describe please want need just some any more most like help get').split(' '));
+const SMALLTALK = new Set(("hello hi hey heya hiya howdy greetings goodmorning goodafternoon goodevening goodnight bye goodbye 你好 您好 你好呀 你好啊 哈喽 嗨 早上好 中午好 下午好 晚上好 早 早安 晚安 在吗 在不在 再见 拜拜 good great nice cool fine ok okay awesome amazing excellent perfect wonderful fantastic brilliant superb terrific lovely beautiful sweet neat smart clever helpful useful interesting yes yeah yep yup sure right correct exactly indeed absolutely definitely totally agreed agree understood gotcha noted alright thanks thank thankyou thx ty cheers appreciated wow whoa omg yay haha hahaha hehe lol hmm ah aha oh ohh love loved like liked works worked impressed amazed pleased glad happy 好 好的 好啊 很好 挺好 真好 太好了 棒 很棒 超棒 真棒 太棒了 牛 牛逼 厉害 太厉害了 强 优秀 完美 漂亮 绝了 妙 赞 好评 满分 666 可以 行 没问题 不错 对 对的 没错 确实 是的 同意 嗯 嗯嗯 哦 收到 明白 明白了 懂了 了解 知道了 学到了 清楚 谢谢 谢了 多谢 感谢 辛苦了 哇 哇塞 天哪 哈哈 哈哈哈 嘿嘿 有意思 有趣 好用 有用 有帮助 好主意 加油 真香 爱了 喜欢 服了 佩服 稳 搞定 妥了").split(' ').concat(PACK.vocab.smalltalkExtra || []));
+const FILLER = new Set(("this that it its is was are be been im i am so very really quite pretty such too just a an the and but also well now then man all thing one sounds looks seems feels lot bunch ton").split(' '));
+const ZH_FILLER = /[这那个真太很挺蛮啊呀呢吧了的哟嘛也就都是滴之极其非常相当确实还比较特别]/g;
+const ZH_STOPBG = new Set('什么 怎么 么样 怎样 如何 哪些 多少 可以 是否 有没 没有 这个 那个 还是 以及 或者 是不 不是 能不 不能 一个 就是 的话 一下 这样 那样 为啥 有点 一些 还有 然后 所以 因为'.split(' '));
+const SYN = PACK.vocab.synonymsStemmed || {};
+const ZH_TERMS = (PACK.vocab.zhTerms || []).map(([p, en]) => [new RegExp(p, 'g'), en]);
+
+function stem(t) { return t.replace(/(ing|ed|es|s)$/, '').replace(/e$/, ''); }
+function tokenize(text, expand) {
+  const out = new Set(); const lower = text.toLowerCase();
+  (lower.match(/[a-z0-9]{3,}/g) || []).forEach(m => {
+    if (STOP.has(m)) return;
+    const st = stem(m); out.add(st);
+    if (expand && SYN[st]) SYN[st].forEach(x => out.add(x));
+  });
+  (lower.match(/[一-鿿]+/g) || []).forEach(run => {
+    for (let i = 0; i < run.length - 1; i++) { const bg = run.slice(i, i + 2); if (!ZH_STOPBG.has(bg)) out.add(bg); }
+  });
+  return out;
+}
+function grams(text) {
+  const gs = []; const t = text.toLowerCase().replace(/[^a-z0-9一-鿿]+/g, ' ');
+  t.split(' ').forEach(w => {
+    if (!w) return;
+    if (/[一-鿿]/.test(w)) {
+      for (let i = 0; i < w.length - 1; i++) { const bg = w.slice(i, i + 2); if (!ZH_STOPBG.has(bg)) gs.push(bg); }
+      // CJK unigram layer: single chars carry real signal in Chinese
+      // (停/素/辣); tf-idf downweights the ubiquitous ones automatically.
+      for (const ch of w) { if (!'的吗呢了吧啊呀哦是有不我你他她它们在和与或及个么什怎这那能可要会好多少'.includes(ch)) gs.push(ch); }
+    }
+    else if (w.length >= 3) { const p = '#' + w + '#'; for (let i = 0; i < p.length - 2; i++) gs.push(p.slice(i, i + 3)); }
+  });
+  return gs;
+}
+const GDF = {}, NVEC = {}, NNORM = {}, QTOK = {}, ATOK = {}, TDF = {};
+IDS.forEach(id => {
+  const n = NODES[id];
+  const txt = n.q.en + ' ' + (n.q.zh || '') + ' ' + (n.keywords || []).join(' ');
+  const tf = new Map();
+  grams(txt).forEach(g => tf.set(g, (tf.get(g) || 0) + 1));
+  grams(n.a.en + ' ' + (n.a.zh || '')).forEach(g => tf.set(g, (tf.get(g) || 0) + 0.35));
+  NVEC[id] = tf; tf.forEach((_, g) => GDF[g] = (GDF[g] || 0) + 1);
+  QTOK[id] = tokenize(txt, false); QTOK[id].forEach(t => TDF[t] = (TDF[t] || 0) + 1);
+  ATOK[id] = tokenize(n.a.en + ' ' + (n.a.zh || ''), false);
+});
+IDS.forEach(id => {
+  let norm = 0;
+  NVEC[id].forEach((f, g) => { const w = (1 + Math.log(f)) * Math.log(1 + IDS.length / (GDF[g] || 1)); NVEC[id].set(g, w); norm += w * w; });
+  NNORM[id] = Math.sqrt(norm) || 1;
+});
+function tw(t) { const d = TDF[t] || 0; return d <= 2 ? 3 : d <= 5 ? 2 : d <= 12 ? 1 : 0; }
+const PARENTS = {}; IDS.forEach(id => (NODES[id].children || []).forEach(c => (PARENTS[c] = PARENTS[c] || []).push(id)));
+
+function augment(text, S) {
+  let out = text;
+  if (/[一-鿿]/.test(text)) {
+    const hits = [];
+    ZH_TERMS.forEach(([re, en]) => { re.lastIndex = 0; const m = re.exec(text); if (m) hits.push([m.index, en]); });
+    hits.sort((a, b) => a[0] - b[0]);
+    // verb-first Chinese: the EARLIEST matched term carries the intent — double it
+    if (hits.length) out += ' ' + hits.map(([, en], i) => (i === 0 ? en + ' ' + en : en)).join(' ');
+  }
+  // Ellipsis injection: only when the query carries ZERO content tokens of
+  // its own ("what about it?", "然后呢") — a query with real content words
+  // must stand on them; the mild context bonus handles topical continuity.
+  if (S && S.visited.length && tokenize(text, false).size === 0) {
+    const last = S.visited[S.visited.length - 1];
+    if (last && NODES[last]) out += ' ' + (NODES[last].keywords || []).slice(0, 2).join(' ') + ' ' + last.replace(/-/g, ' ');
+  }
+  return out;
+}
+function score(raw, S) {
+  const text = augment(raw, S), s = text.toLowerCase(), ut = tokenize(text, true);
+  const qtf = new Map(); grams(text).forEach(g => qtf.set(g, (qtf.get(g) || 0) + 1));
+  let qn = 0; qtf.forEach((f, g) => { const w = (1 + Math.log(f)) * Math.log(1 + IDS.length / (GDF[g] || IDS.length)); qtf.set(g, w); qn += w * w; });
+  qn = Math.sqrt(qn) || 1;
+  const res = [];
+  IDS.forEach(id => {
+    const n = NODES[id]; let sc = 0;
+    { const matched = [];
+      [...(n.keywords || [])].sort((a, b) => b.length - a.length).forEach(kw => {
+        if (!s.includes(kw)) return;
+        if (matched.some(m => m.includes(kw))) return; // prefix/substring of an already-scored hit
+        matched.push(kw);
+        sc += kw.length > 4 || (/[一-鿿]/.test(kw) && kw.length >= 3) ? 2 : 1;
+      }); }
+    if (s.includes(n.q.en.toLowerCase()) || (n.q.zh && s.includes(n.q.zh))) sc += 6;
+    ut.forEach(t => {
+      if (QTOK[id].has(t)) { sc += tw(t); return; }
+      if (t.length >= 5 && !/[一-鿿]/.test(t)) { for (const qt of QTOK[id]) { if (qt.length >= 5 && (qt.startsWith(t) || t.startsWith(qt))) { sc += Math.max(1, tw(qt) - 1); return; } } }
+      if (ATOK[id].has(t)) sc += Math.max(1, Math.floor(tw(t) / 2));
+    });
+    let dot = 0; qtf.forEach((w, g) => { const nw = NVEC[id].get(g); if (nw) dot += w * nw; });
+    const cos = dot / (qn * NNORM[id]);
+    if (cos > 0.14) sc += Math.min(6, Math.round(cos * 10));
+    if (S) {
+      const lastId = S.visited[S.visited.length - 1];
+      const pron = /\b(it|this|that)\b|它|这个|那个/i.test(raw);
+      if (lastId === id) sc -= pron ? 9 : 2; // pronoun follow-up must move on
+      const rec = S.visited.slice(-2);
+      rec.forEach(r => {
+        if ((NODES[r] && (NODES[r].children || []).includes(id))) sc += 2;
+        else if ((PARENTS[r] || []).includes(id)) sc += 1.5;
+        else if (r.split('-')[0] === id.split('-')[0] && r !== id) sc += 1;
+      });
+    }
+    if (sc > 0) res.push({ id, sc });
+  });
+  return res.sort((a, b) => b.sc - a.sc);
+}
+function isSmallTalk(t) {
+  const s = t.trim().toLowerCase().replace(/[!.。！~,，?？\s]+$/g, ''); if (!s || s.length > 40) return false;
+  if (SMALLTALK.has(s)) return true;
+  if (/[一-鿿]/.test(s)) { const f = s.replace(/\s+/g, ''); const st = f.replace(ZH_FILLER, ''); const re = eskRe(); return (f.length <= 12 && re.test(f)) || (st && st.length <= 12 && re.test(st)); }
+  const ws = s.split(/\s+/); if (ws.length > 6) return false;
+  let sent = 0; for (const w of ws) { if (FILLER.has(w)) continue; if (SMALLTALK.has(w)) { sent++; continue; } return false; }
+  return sent > 0;
+}
+let _eskRe = null;
+function eskRe() { if (!_eskRe) _eskRe = new RegExp('^(?:' + [...SMALLTALK].filter(w => /[一-鿿0-9]/.test(w)).sort((a, b) => b.length - a.length).join('|') + ')+$'); return _eskRe; }
+function inquiry(t) { const s = t.toLowerCase().trim(); return /[?？]$/.test(s) || /^(what|how|why|who|where|which|can|do|does|is|are|let me|tell me|show me|explain|give me|help|i want to know|how to)/.test(s) || /(什么|怎么|如何|哪些|多少|吗)|^(请|告诉我|说说|讲讲|介绍|解释|我想知道|想了解)/.test(s); }
+function evalExpr(raw) {
+  const src = raw.replace(/[×xX]/g, '*').replace(/[÷]/g, '/').replace(/\s+/g, '');
+  if (!/^[\d+\-*/%^().]+$/.test(src) || !/\d/.test(src)) return null;
+  let p = 0;
+  function num() { const st = p; while (p < src.length && /[\d.]/.test(src[p])) p++; if (st === p) return null; const v = Number(src.slice(st, p)); return isFinite(v) ? v : null; }
+  function fac() { if (src[p] === '(') { p++; const v = expr(); if (v === null || src[p] !== ')') return null; p++; return v; } if (src[p] === '-') { p++; const v = fac(); return v === null ? null : -v; } return num(); }
+  function pow() { const b = fac(); if (b === null) return null; if (src[p] === '^') { p++; const e = pow(); return e === null ? null : Math.pow(b, e); } return b; }
+  function term() { let v = pow(); if (v === null) return null; while (/[*/%]/.test(src[p])) { const o = src[p++]; const r = pow(); if (r === null || (o !== '*' && r === 0)) return null; v = o === '*' ? v * r : o === '/' ? v / r : v % r; } return v; }
+  function expr() { let v = term(); if (v === null) return null; while (/[+\-]/.test(src[p])) { const o = src[p++]; const r = term(); if (r === null) return null; v = o === '+' ? v + r : v - r; } return v; }
+  const out = expr(); return p === src.length && out !== null && isFinite(out) ? out : null;
+}
+/* ENGINE_END */
+/* ══════════════ UI layer ══════════════ */
+const S = { visited: [], depth: 0, fallbackIdx: 0 };
+const T = {
+  en: { placeholder: 'Ask me anything…', quick: 'Quick Questions', toolbox: 'Toolbox', powered: 'Powered by', reset: 'New chat',
+        didYouMean: 'I might not have caught that exactly — did you mean one of these? Or search it directly.',
+        aeoChip: 'Search this with Google AI', aeoLead: 'All set — confirm below to open it in a new tab:',
+        aeoTitle: 'Google AI Mode Search', aeoDesc: 'Continue this question with free AI search. Opens in a new tab — this chat stays right here.',
+        aeoCta: 'Open ↗', follow: 'Following up on that — ',
+        ack: ['Glad that helps! Ask me anything else below.', 'Happy to hear it — I am right here for the next question.'],
+        fallback: ['I may not have that answer — try a suggested question, or search it directly.', 'That is a bit outside my map — the chips below can help.'],
+        toolCalc: 'Calculator', toolJson: 'JSON Validator', toolTs: 'Timestamp', toolUnits: 'Units', toolStats: 'Text Stats + SHA-256', toolImg: 'Image tools (soon)',
+        calcTip: 'Tip: type an expression straight into the chat.', jsonBtn: 'Validate & pretty-print', statsBtn: 'Compute SHA-256', now: 'Now' },
+  zh: { placeholder: '随便问我什么…', quick: '快捷问题', toolbox: '工具箱', powered: '技术支持', reset: '新会话',
+        didYouMean: '我可能没有完全对上你的问题——你是想问下面哪个？也可以直接外部搜索。',
+        aeoChip: '用 Google AI 搜索这个问题', aeoLead: '好——搜索已备好，确认后在新标签页打开：',
+        aeoTitle: 'Google AI 模式搜索', aeoDesc: '用免费 AI 搜索继续这个问题。新标签页打开，本对话原地保留。',
+        aeoCta: '打开 ↗', follow: '接着刚才的话题——',
+        ack: ['很高兴有帮助！还有问题随时问。', '收到！下一个问题我在这儿等你。'],
+        fallback: ['这个可能超出我的知识图——试试推荐问题，或直接外部搜索。', '这有点超纲了——下面的选项可以帮到你。'],
+        toolCalc: '计算器', toolJson: 'JSON 校验', toolTs: '时间戳', toolUnits: '单位换算', toolStats: '文本统计 + SHA-256', toolImg: '图像工具（预留）',
+        calcTip: '小技巧：直接在对话框敲算式也行。', jsonBtn: '校验并美化', statsBtn: '计算 SHA-256', now: '当前' },
+};
+const SVG = {
+  spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>',
+  q: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+  flow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h7"/></svg>',
+  caret: '<svg class="esi-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+};
+const $ = (s2, el) => (el || document).querySelector(s2);
+const app = $('#app');
+function h(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
+const esc = (s2) => String(s2).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function build() {
+  const B = PACK.brand;
+  app.innerHTML = '';
+  // ── header: FinChip banner style ──
+  const head = h('div', 'esi-header');
+  head.insertAdjacentHTML('beforeend', SVG.spark);
+  head.append(h('span', 'esi-brand', esc(B.name)));
+  head.append(h('span', 'esi-tag', esc(B.tag || 'Beta')));
+  if (B.tagline) head.append(h('span', 'esi-tagline', esc(B.tagline[LOC] || B.tagline.en || '')));
+  head.append(h('div', 'esi-spacer'));
+  const rBtn = h('button', 'esi-orb', SVG.refresh); rBtn.title = T[LOC].reset; rBtn.onclick = reset; head.append(rBtn);
+  const dBtn = h('button', 'esi-orb', document.body.classList.contains('esi-dark') ? SVG.moon : SVG.sun);
+  dBtn.onclick = () => { document.body.classList.toggle('esi-dark'); dBtn.innerHTML = document.body.classList.contains('esi-dark') ? SVG.moon : SVG.sun; };
+  head.append(dBtn);
+  if (LANGS.length > 1) {
+    const lBtn = h('button', 'esi-orb', LOC === 'zh' ? 'Zh' : 'En');
+    lBtn.title = 'En / Zh';
+    lBtn.onclick = () => { LOC = LOC === LANGS[0] ? LANGS[1] : LANGS[0]; build(); botSay(PACK.brand.welcome[LOC] || PACK.brand.welcome.en, welcomeChips()); };
+    head.append(lBtn);
+  }
+  app.append(head);
+
+  const main = h('div', 'esi-main');
+  const left = h('div', 'esi-left');
+  const chatEl = h('div', 'esi-chat'); chatEl.id = 'chat'; left.append(chatEl);
+  // ── composer ──
+  const comp = h('div', 'esi-composer');
+  const row = h('div', 'esi-inrow');
+  const ta = h('textarea', 'esi-input'); ta.id = 'input'; ta.rows = 1; ta.placeholder = T[LOC].placeholder;
+  ta.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
+  ta.oninput = () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 160) + 'px'; };
+  const sb = h('button', 'esi-send', SVG.send); sb.onclick = send;
+  row.append(ta, sb); comp.append(row);
+  // foot: three default quick minis + version dropdown
+  const foot = h('div', 'esi-foot');
+  QUICK.slice(0, 3).forEach(id => {
+    if (!NODES[id]) return;
+    const m = h('button', 'esi-mini', esc(qOf(id))); m.title = qOf(id);
+    m.onclick = () => { userSay(qOf(id)); answer(id); };
+    foot.append(m);
+  });
+  const vw = h('span', 'esi-ver-wrap');
+  const vb = h('button', 'esi-version');
+  vb.innerHTML = '<span class="esi-verdot"></span>Eureka Static Intelligence 2.0 High' + SVG.caret;
+  vb.onclick = () => toggleVerMenu(vw);
+  vw.append(vb); foot.append(vw);
+  comp.append(foot); left.append(comp); main.append(left);
+
+  // ── rail: two locked panels with icons ──
+  const rail = h('div', 'esi-rail');
+  const p1 = h('div', 'esi-panel');
+  const ph1 = h('div', 'esi-phead'); ph1.innerHTML = SVG.q + esc(T[LOC].quick); p1.append(ph1);
+  const b1 = h('div', 'esi-pbody');
+  QUICK.forEach(id => { if (!NODES[id]) return; const q = h('button', 'esi-qq', esc(qOf(id))); q.onclick = () => { userSay(qOf(id)); answer(id); }; b1.append(q); });
+  p1.append(b1); rail.append(p1);
+  const p2 = h('div', 'esi-panel');
+  const ph2 = h('div', 'esi-phead'); ph2.innerHTML = SVG.flow + esc(PACK.flow ? 'Flow' : T[LOC].toolbox); p2.append(ph2);
+  const b2 = h('div', 'esi-pbody');
+  if (!PACK.flow) {
+    const tools = [
+      ['calculator', '🧮', T[LOC].toolCalc], ['json', '{}', T[LOC].toolJson], ['timestamp', '🕑', T[LOC].toolTs],
+      ['units', '⇄', T[LOC].toolUnits], ['textstats', '𝚺', T[LOC].toolStats],
+    ].filter(([k]) => (PACK.toolbox || []).includes(k));
+    tools.forEach(([k, ico, label]) => { const btn = h('button', 'esi-tool'); btn.innerHTML = '<span class="esi-tool-ico">' + ico + '</span>' + esc(label); btn.onclick = () => showTool(k); b2.append(btn); });
+    const img = h('button', 'esi-tool dis'); img.innerHTML = '<span class="esi-tool-ico">🖼</span>' + esc(T[LOC].toolImg); b2.append(img);
+  }
+  p2.append(b2); rail.append(p2); main.append(rail); app.append(main);
+}
+function toggleVerMenu(wrap) {
+  const old = wrap.querySelector('.esi-ver-menu');
+  const bd = document.querySelector('.esi-ver-backdrop');
+  if (old) { old.remove(); if (bd) bd.remove(); return; }
+  const backdrop = h('div', 'esi-ver-backdrop');
+  backdrop.onclick = () => { backdrop.remove(); const m = wrap.querySelector('.esi-ver-menu'); if (m) m.remove(); };
+  document.body.append(backdrop);
+  const menu = h('div', 'esi-ver-menu');
+  const hi = h('button', 'esi-ver-item on'); hi.innerHTML = 'High ' + SVG.check;
+  hi.onclick = () => { menu.remove(); backdrop.remove(); };
+  const med = h('button', 'esi-ver-item', 'Medium'); med.disabled = true;
+  const lo = h('button', 'esi-ver-item', 'Low'); lo.disabled = true;
+  menu.append(hi, med, lo); wrap.append(menu);
+}
+const qOf = (id) => (NODES[id].q[LOC] || NODES[id].q.en);
+const aOf = (id) => (NODES[id].a[LOC] || NODES[id].a.en);
+function chat() { return $('#chat'); }
+function scroll2() { chat().scrollTop = chat().scrollHeight; }
+function userSay(text) { const m = h('div', 'esi-msg user'); m.append(h('div', 'esi-bubble', esc(text))); chat().append(m); scroll2(); }
+function botSay(text, chips, widget) {
+  const m = h('div', 'esi-msg bot');
+  m.append(h('div', 'esi-avatar', esc(PACK.brand.name[0] || 'E')));
+  m.append(h('div', 'esi-bubble', esc(text)));
+  chat().append(m);
+  if (widget) { const w = h('div', 'esi-widget'); w.append(widget); chat().append(w); }
+  if (chips && chips.length) {
+    const c = h('div', 'esi-chips');
+    chips.forEach(([label, fn]) => { const b = h('button', 'esi-chip', esc(label)); b.onclick = fn; c.append(b); });
+    chat().append(c);
+  }
+  scroll2();
+}
+function welcomeChips() {
+  return QUICK.slice(0, 2).map(id => [qOf(id), () => { userSay(qOf(id)); answer(id); }]).concat([anchorChip()]);
+}
+function anchorChip() {
+  const A = PACK.brand.anchor;
+  const label = A.label[LOC] || A.label.en;
+  return [label, () => { if (A.action === 'link') window.open(A.target, '_blank', 'noopener'); else { userSay(label); answer(A.target); } }];
+}
+function chipsFor(id) {
+  const n = NODES[id]; const fresh = (arr) => arr.filter(x => !S.visited.includes(x) && NODES[x]);
+  const kids = (n.children || []).filter(x => x !== id && NODES[x]);
+  let out = [];
+  if (S.depth < 2) {
+    const pool = QUICK.filter(q => q !== id); out = fresh(pool).concat(pool).slice(0, 2);
+  } else {
+    const grand = kids.flatMap(k => NODES[k].children || []).filter(x => x !== id && !kids.includes(x));
+    const nonQ = (a) => a.filter(x => !QUICK.includes(x));
+    let branch = fresh(nonQ(kids))[0] || fresh(nonQ(grand))[0] || fresh(kids)[0];
+    if (!branch) { const pool = fresh(nonQ(IDS.filter(x => x !== id))); branch = pool[Math.floor(Math.random() * pool.length)] || kids[0]; }
+    const mains = QUICK.filter(q => q !== id && q !== branch);
+    const main = fresh(mains)[0] || mains[S.depth % mains.length];
+    out = [branch, main].filter(Boolean);
+  }
+  const uniq = [...new Set(out)];
+  return uniq.map(cid => [qOf(cid), () => { userSay(qOf(cid)); answer(cid); }]).concat([anchorChip()]);
+}
+function answer(id) {
+  const n = NODES[id];
+  const last = S.visited[S.visited.length - 1];
+  const same = S.depth >= 2 && last && last !== id && (last.split('-')[0] === id.split('-')[0] || (NODES[last] && (NODES[last].children || []).includes(id)) || (PARENTS[last] || []).includes(id));
+  const lead = same ? T[LOC].follow : '';
+  let widget = null;
+  if (n.link) { widget = null; }
+  const chips = chipsFor(id);
+  if (n.link) chips.unshift([n.link.label[LOC] || n.link.label.en, () => window.open(n.link.href, '_blank', 'noopener')]) && chips.splice(2, 1);
+  setTimeout(() => botSay(lead + aOf(id), chips.slice(0, 3), widget), 260);
+  if (!S.visited.includes(id)) S.visited.push(id);
+  S.depth++;
+}
+function aeoCard(query) {
+  const card = h('div', 'esi-card');
+  card.append(h('div', 'esi-card-title', esc(T[LOC].aeoTitle)));
+  const row = h('div', 'esi-linkcard');
+  const img = h('img');
+  img.src = 'https://www.google.com/favicon.ico';
+  img.alt = '';
+  img.onerror = () => { img.style.display = 'none'; };
+  row.append(img);
+  const body = h('div', 'esi-lc-body');
+  body.append(h('div', 'esi-lc-d', esc(T[LOC].aeoDesc)));
+  body.append(h('div', 'esi-lc-q', '“' + esc(query) + '”'));
+  body.append(h('div', 'esi-meta', 'google.com · AI Mode'));
+  row.append(body);
+  const open = h('button', 'esi-open', esc(T[LOC].aeoCta));
+  open.onclick = () => window.open('https://www.google.com/search?udm=50&q=' + encodeURIComponent(query), '_blank', 'noopener');
+  row.append(open); card.append(row); return card;
+}
+function send() {
+  const ta = $('#input'); const text = ta.value.trim(); if (!text) return;
+  ta.value = ''; ta.style.height = 'auto'; userSay(text);
+  const v = evalExpr(text.replace(/[?？!！=]+$/g, ''));
+  if (v !== null && /[+\-*/%^×÷]/.test(text)) { setTimeout(() => { botSay(text.replace(/\s+/g, '') + ' = ' + (Math.round(v * 1e10) / 1e10), [anchorChip()], toolCalc()); }, 200); return; }
+  if (isSmallTalk(text)) { const a = T[LOC].ack; setTimeout(() => botSay(a[S.fallbackIdx++ % a.length], welcomeChips()), 200); return; }
+  const scored = score(text, S);
+  const top = scored[0];
+  if (top && top.sc >= 4) { answer(top.id); return; }
+  if (top && top.sc >= 2) {
+    const cands = scored.slice(0, 2).map(x => [qOf(x.id), () => { userSay(qOf(x.id)); answer(x.id); }]);
+    cands.push([T[LOC].aeoChip, () => setTimeout(() => botSay(T[LOC].aeoLead, [anchorChip()], aeoCard(text)), 150)]);
+    setTimeout(() => botSay(T[LOC].didYouMean, cands.slice(0, 3)), 260);
+    return;
+  }
+  const f = T[LOC].fallback;
+  const chips = [[T[LOC].aeoChip, () => setTimeout(() => botSay(T[LOC].aeoLead, [anchorChip()], aeoCard(text)), 150)], welcomeChips()[0], anchorChip()];
+  setTimeout(() => botSay(f[S.fallbackIdx++ % f.length], chips), 260);
+}
+/* ── toolbox cards ── */
+function toolCalc() {
+  const card = h('div', 'esi-card'); card.append(h('div', 'esi-card-title', esc(T[LOC].toolCalc)));
+  const disp = h('input', 'esi-ti'); disp.placeholder = '23*45+12';
+  const grid = h('div', 'esi-grid4');
+  'C ( ) ⌫ 7 8 9 ÷ 4 5 6 × 1 2 3 - 0 . % + ^ ='.split(' ').forEach(k => {
+    const b = h('button', 'esi-key' + (k === '=' ? ' eq' : /[÷×%^+()\-]|⌫|C/.test(k) ? ' op' : ''), esc(k));
+    b.onclick = () => {
+      if (k === 'C') disp.value = '';
+      else if (k === '⌫') disp.value = disp.value.slice(0, -1);
+      else if (k === '=') { const v = evalExpr(disp.value); disp.value = v === null ? 'Error' : String(Math.round(v * 1e10) / 1e10); }
+      else disp.value += k;
+    };
+    grid.append(b);
+  });
+  card.append(disp, grid, h('div', 'esi-meta', esc(T[LOC].calcTip)));
+  return card;
+}
+function toolJson() {
+  const card = h('div', 'esi-card'); card.append(h('div', 'esi-card-title', esc(T[LOC].toolJson)));
+  const ta = h('textarea', 'esi-ta'); ta.rows = 4; ta.placeholder = '{"a": 1}';
+  const out = h('pre', 'esi-hash'); out.style.display = 'none';
+  const btn = h('button', 'esi-btn pri', esc(T[LOC].jsonBtn));
+  btn.onclick = () => { out.style.display = 'block'; try { out.textContent = JSON.stringify(JSON.parse(ta.value), null, 2); out.style.color = ''; } catch (e) { out.textContent = '✗ ' + e.message; out.style.color = '#dc2626'; } };
+  card.append(ta, btn, out); return card;
+}
+function toolTs() {
+  const card = h('div', 'esi-card'); card.append(h('div', 'esi-card-title', esc(T[LOC].toolTs)));
+  const inp = h('input', 'esi-ti'); inp.value = String(Math.floor(Date.now() / 1000));
+  const out = h('div', 'esi-row'); const meta = h('span', 'esi-meta');
+  const upd = () => { const n2 = /^\d{13}$/.test(inp.value.trim()) ? Number(inp.value) / 1000 : Number(inp.value); if (isFinite(n2) && n2 > 0 && n2 < 4e12) { const d = new Date(n2 * 1000); meta.textContent = d.toISOString().replace('T', ' ').replace(/\..+/, ' UTC · ') + d.toLocaleString(); } else meta.textContent = '—'; };
+  inp.oninput = upd; upd(); out.append(h('span', '', 'UTC/Local'), meta);
+  const nowB = h('button', 'esi-btn', esc(T[LOC].now)); nowB.onclick = () => { inp.value = String(Math.floor(Date.now() / 1000)); upd(); };
+  card.append(inp, out, nowB); return card;
+}
+function toolUnits() {
+  const card = h('div', 'esi-card'); card.append(h('div', 'esi-card-title', esc(T[LOC].toolUnits)));
+  const inp = h('input', 'esi-ti'); inp.value = '1';
+  const sel = h('select', 'esi-ti'); ['eth', 'gwei', 'wei'].forEach(u => { const o = h('option', '', u); o.value = u; sel.append(o); });
+  const rows = h('div');
+  const pow = { wei: 0, gwei: 9, eth: 18 };
+  const upd = () => { rows.innerHTML = ''; const n2 = Number(inp.value); ['wei', 'gwei', 'eth'].filter(u => u !== sel.value).forEach(u => { const v = n2 * Math.pow(10, pow[sel.value] - pow[u]); const r = h('div', 'esi-row'); r.append(h('span', '', u.toUpperCase()), h('span', 'esi-meta', !isFinite(v) ? '—' : Math.abs(v) >= 1e15 || (v !== 0 && Math.abs(v) < 1e-6) ? v.toExponential(4) : v.toLocaleString('en-US', { maximumFractionDigits: 9 }))); rows.append(r); }); };
+  inp.oninput = upd; sel.onchange = upd; upd();
+  card.append(inp, sel, rows); return card;
+}
+function toolStats() {
+  const card = h('div', 'esi-card'); card.append(h('div', 'esi-card-title', esc(T[LOC].toolStats)));
+  const ta = h('textarea', 'esi-ta'); ta.rows = 3;
+  const out = h('div', 'esi-row'); const meta = h('span', 'esi-meta');
+  const upd = () => { const s2 = ta.value; const cjk = (s2.match(/[一-鿿]/g) || []).length; meta.textContent = s2.length + ' / ' + ((s2.match(/[a-zA-Z0-9]+/g) || []).length + cjk) + ' / ' + (s2 ? s2.split('\n').length : 0) + ' / ' + new TextEncoder().encode(s2).length; };
+  ta.oninput = upd; upd(); out.append(h('span', '', 'chars/words/lines/bytes'), meta);
+  const hres = h('div', 'esi-hash'); hres.style.display = 'none';
+  const btn = h('button', 'esi-btn pri', esc(T[LOC].statsBtn));
+  btn.onclick = async () => { const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ta.value)); hres.style.display = 'block'; hres.textContent = '0x' + [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join(''); };
+  card.append(ta, out, btn, hres); return card;
+}
+function showTool(k) {
+  const map = { calculator: toolCalc, json: toolJson, timestamp: toolTs, units: toolUnits, textstats: toolStats };
+  const label = { calculator: T[LOC].toolCalc, json: T[LOC].toolJson, timestamp: T[LOC].toolTs, units: T[LOC].toolUnits, textstats: T[LOC].toolStats }[k];
+  botSay(label + ':', [anchorChip()], map[k]());
+}
+function reset() { S.visited = []; S.depth = 0; S.fallbackIdx = 0; build(); botSay(PACK.brand.welcome[LOC] || PACK.brand.welcome.en, welcomeChips()); }
+build();
+botSay(PACK.brand.welcome[LOC] || PACK.brand.welcome.en, welcomeChips());
+
+</script>
+</body>
+</html>
