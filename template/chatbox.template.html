@@ -197,7 +197,33 @@ function augment(text, S) {
   }
   return out;
 }
+/* SymSpell deletes-1: tolerate one-keystroke latin typos ("clening"→"cleaning").
+   Vocabulary = question tokens + latin keywords; built lazily on first miss. */
+let _VOC = null, _DEL = null;
+function _typoInit() {
+  _VOC = new Set(); _DEL = new Map();
+  IDS.forEach(id => {
+    QTOK[id].forEach(t => { if (t.length >= 4 && !/[一-鿿]/.test(t)) _VOC.add(t); });
+    (NODES[id].keywords || []).forEach(k => { if (k.length >= 4 && !/[一-鿿]/.test(k)) _VOC.add(k.toLowerCase()); });
+  });
+  _VOC.forEach(w => {
+    if (!_DEL.has(w)) _DEL.set(w, w);
+    for (let i = 0; i < w.length; i++) { const d = w.slice(0, i) + w.slice(i + 1); if (!_DEL.has(d)) _DEL.set(d, w); }
+  });
+}
+function fixTypos(text) {
+  if (!/[a-zA-Z]{4,}/.test(text)) return text;
+  if (!_VOC) _typoInit();
+  return text.replace(/[A-Za-z]{4,}/g, (w) => {
+    const lw = w.toLowerCase();
+    if (STOP.has(lw) || _VOC.has(lw) || _VOC.has(stem(lw)) || SMALLTALK.has(lw) || FILLER.has(lw)) return w;
+    let hit = _DEL.get(lw) || null;
+    for (let i = 0; i < lw.length && !hit; i++) hit = _DEL.get(lw.slice(0, i) + lw.slice(i + 1)) || null;
+    return hit || w;
+  });
+}
 function score(raw, S) {
+  raw = fixTypos(raw);
   const text = augment(raw, S), s = text.toLowerCase(), ut = tokenize(text, true);
   const qtf = new Map(); grams(text).forEach(g => qtf.set(g, (qtf.get(g) || 0) + 1));
   let qn = 0; qtf.forEach((f, g) => { const w = (1 + Math.log(f)) * Math.log(1 + IDS.length / (GDF[g] || IDS.length)); qtf.set(g, w); qn += w * w; });

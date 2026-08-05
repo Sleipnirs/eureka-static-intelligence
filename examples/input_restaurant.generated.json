@@ -27,169 +27,169 @@
     {
       "q": {
         "zh": "你们的营业时间是几点到几点？",
-        "en": "你们的营业时间是几点到几点？"
+        "en": "What are your opening hours?"
       },
       "a": {
         "zh": "每天上午11:00至晚上22:00营业，全年无休。周五周六延长至23:00，最晚点餐时间为打烊前半小时。",
-        "en": "每天上午11:00至晚上22:00营业，全年无休。周五周六延长至23:00，最晚点餐时间为打烊前半小时。"
+        "en": "Open daily 11:00–22:00, all year round. Fridays and Saturdays until 23:00. Last order half an hour before closing."
       },
       "mainline": true
     },
     {
       "q": {
         "zh": "怎么订座？需要提前多久？",
-        "en": "怎么订座？需要提前多久？"
+        "en": "How do I book a table? How far in advance?"
       },
       "a": {
         "zh": "三种方式：点击在线订座按钮、拨打前台电话、或到店登记。周末和节假日建议提前1-2天预订，包间建议提前3天。",
-        "en": "三种方式：点击在线订座按钮、拨打前台电话、或到店登记。周末和节假日建议提前1-2天预订，包间建议提前3天。"
+        "en": "Three ways: the online booking button, a phone call, or walk-in registration. Book 1–2 days ahead for weekends and holidays, 3 days for private rooms."
       },
       "mainline": true
     },
     {
       "q": {
         "zh": "有包间吗？最多能坐多少人？",
-        "en": "有包间吗？最多能坐多少人？"
+        "en": "Do you have private rooms? How many seats?"
       },
       "a": {
         "zh": "有6个包间：4个小包间可坐8-10人，2个大包间可坐16-20人。包间免最低消费，仅需提前预订。",
-        "en": "有6个包间：4个小包间可坐8-10人，2个大包间可坐16-20人。包间免最低消费，仅需提前预订。"
+        "en": "Six private rooms: four small ones seat 8–10, two large ones seat 16–20. No minimum spend — just book ahead."
       },
       "mainline": true
     },
     {
       "q": {
         "zh": "可以外卖或打包吗？",
-        "en": "可以外卖或打包吗？"
+        "en": "Do you do delivery or takeout?"
       },
       "a": {
         "zh": "全菜单支持打包，外卖已入驻各大外卖平台，搜索\"蜀香园\"即可。自取享9折优惠。",
-        "en": "全菜单支持打包，外卖已入驻各大外卖平台，搜索\"蜀香园\"即可。自取享9折优惠。"
+        "en": "The full menu can be packed to go. Find us on major delivery apps by searching \"Shu Xiang Yuan\". Self-pickup gets 10% off."
       },
       "mainline": true
     },
     {
       "q": {
         "zh": "招牌菜有哪些？",
-        "en": "招牌菜有哪些？"
+        "en": "What are your signature dishes?"
       },
       "a": {
         "zh": "镇店三宝：毛血旺、水煮鱼、樟茶鸭。回头客必点：夫妻肺片、麻婆豆腐、担担面。每周还有时令特色菜，详见店内水牌。",
-        "en": "镇店三宝：毛血旺、水煮鱼、樟茶鸭。回头客必点：夫妻肺片、麻婆豆腐、担担面。每周还有时令特色菜，详见店内水牌。"
+        "en": "The house trio: Mao Xue Wang, boiled fish in chili oil, and tea-smoked duck. Regulars also swear by Fuqi Feipian, Mapo tofu, and Dan Dan noodles. Weekly seasonal specials on the board."
       },
       "mainline": true
     },
     {
       "q": {
         "zh": "能不能调整辣度？不能吃辣怎么办？",
-        "en": "能不能调整辣度？不能吃辣怎么办？"
+        "en": "Can you adjust the spicy level? What if I can't eat spicy food?"
       },
       "a": {
         "zh": "绝大多数菜品支持微辣、中辣、特辣三档调整。不吃辣的客人可以选择我们的白味菜系：开水白菜、鸡豆花、清蒸江团等，同样是川菜精髓。",
-        "en": "绝大多数菜品支持微辣、中辣、特辣三档调整。不吃辣的客人可以选择我们的白味菜系：开水白菜、鸡豆花、清蒸江团等，同样是川菜精髓。"
+        "en": "Most dishes come in mild, medium, or extra hot. Non-spicy guests can enjoy our \"white flavor\" line — Kaishui cabbage, chicken tofu pudding, steamed river fish — equally authentic Sichuan."
       },
       "mainline": true
     },
     {
       "q": {
         "zh": "人均消费大概多少？",
-        "en": "人均消费大概多少？"
+        "en": "What's the average price per person?"
       },
       "a": {
         "zh": "午市人均60-80元，晚市人均90-120元，包间宴请人均150-200元。工作日午市有商务套餐，人均45元起。",
-        "en": "午市人均60-80元，晚市人均90-120元，包间宴请人均150-200元。工作日午市有商务套餐，人均45元起。"
+        "en": "Lunch runs ¥60–80 per person, dinner ¥90–120, banquets in private rooms ¥150–200. Weekday business lunch sets start at ¥45."
       },
       "mainline": true
     },
     {
       "q": {
         "zh": "可以刷卡或用手机支付吗？",
-        "en": "可以刷卡或用手机支付吗？"
+        "en": "Do you take cards or mobile payment?"
       },
       "a": {
         "zh": "支持所有银行卡、微信、支付宝、云闪付。可开具增值税普通发票和专用发票。",
-        "en": "支持所有银行卡、微信、支付宝、云闪付。可开具增值税普通发票和专用发票。"
+        "en": "All bank cards, WeChat Pay, Alipay and UnionPay QR accepted. Both general and special VAT invoices available."
       },
       "mainline": true
     },
     {
       "q": {
         "zh": "有停车位吗？",
-        "en": "有停车位吗？"
+        "en": "Is there parking?"
       },
       "a": {
         "zh": "餐厅门口有20个免费车位，旁边商场地库凭消费小票免费停车3小时。",
-        "en": "餐厅门口有20个免费车位，旁边商场地库凭消费小票免费停车3小时。"
+        "en": "20 free spots at the door, plus 3 hours free in the mall garage next door with your receipt."
       }
     },
     {
       "q": {
         "zh": "有儿童椅和儿童餐吗？",
-        "en": "有儿童椅和儿童餐吗？"
+        "en": "Do you have high chairs and kids meals?"
       },
       "a": {
         "zh": "备有宝宝椅，可提供少油少盐的儿童友好菜品，服务员会主动介绍。",
-        "en": "备有宝宝椅，可提供少油少盐的儿童友好菜品，服务员会主动介绍。"
+        "en": "High chairs available, plus kid-friendly dishes with less oil and salt — just ask your server."
       }
     },
     {
       "q": {
         "zh": "能自带酒水吗？收开瓶费吗？",
-        "en": "能自带酒水吗？收开瓶费吗？"
+        "en": "Can I bring my own wine? Is there a corkage fee?"
       },
       "a": {
         "zh": "可以自带酒水，不收取任何开瓶费，我们提供免费醒酒器和冰桶服务。",
-        "en": "可以自带酒水，不收取任何开瓶费，我们提供免费醒酒器和冰桶服务。"
+        "en": "Yes, bring your own — no corkage fee at all, and we provide a free decanter and ice bucket."
       }
     },
     {
       "q": {
         "zh": "有什么优惠活动？",
-        "en": "有什么优惠活动？"
+        "en": "Any discounts or promotions?"
       },
       "a": {
         "zh": "会员储值满1000送100；生日当天凭证件赠送长寿面一份；每周二会员日全单88折（特价菜除外）。",
-        "en": "会员储值满1000送100；生日当天凭证件赠送长寿面一份；每周二会员日全单88折（特价菜除外）。"
+        "en": "Store ¥1000 and get ¥100 free; free longevity noodles on your birthday with ID; 12% off every Tuesday for members (specials excluded)."
       }
     },
     {
       "q": {
         "zh": "取消或修改预订怎么办？",
-        "en": "取消或修改预订怎么办？"
+        "en": "How do I cancel or change a booking?"
       },
       "a": {
         "zh": "开餐前2小时可免费取消或修改，电话和线上均可操作。节假日大型宴席需提前24小时通知。",
-        "en": "开餐前2小时可免费取消或修改，电话和线上均可操作。节假日大型宴席需提前24小时通知。"
+        "en": "Free cancellation or changes up to 2 hours before your slot, by phone or online. Large holiday banquets need 24 hours notice."
       }
     },
     {
       "q": {
         "zh": "食材新鲜吗？有什么保证？",
-        "en": "食材新鲜吗？有什么保证？"
+        "en": "How fresh are the ingredients?"
       },
       "a": {
         "zh": "蔬菜每日凌晨从批发市场直采，河鲜活鱼现点现杀，明厨亮灶可参观后厨，食安等级A级。",
-        "en": "蔬菜每日凌晨从批发市场直采，河鲜活鱼现点现杀，明厨亮灶可参观后厨，食安等级A级。"
+        "en": "Vegetables sourced daily before dawn, live fish prepared to order, an open kitchen you can visit, and a grade-A food safety rating."
       }
     },
     {
       "q": {
         "zh": "适合请客商务宴请吗？",
-        "en": "适合请客商务宴请吗？"
+        "en": "Is it suitable for business banquets?"
       },
       "a": {
         "zh": "大包间配独立点菜服务和茶水师，可提前定制菜单和席卡，支持公司月结和提前开票。",
-        "en": "大包间配独立点菜服务和茶水师，可提前定制菜单和席卡，支持公司月结和提前开票。"
+        "en": "Large private rooms come with dedicated ordering service and a tea master. Custom menus and place cards available; corporate monthly billing and advance invoicing supported."
       }
     },
     {
       "q": {
         "zh": "有素食选择吗？",
-        "en": "有素食选择吗？"
+        "en": "Do you have vegetarian options?"
       },
       "a": {
         "zh": "有专门的素食区：干煸四季豆（免肉末版）、麻婆豆腐素版、鱼香茄子等十余道菜可做全素。",
-        "en": "有专门的素食区：干煸四季豆（免肉末版）、麻婆豆腐素版、鱼香茄子等十余道菜可做全素。"
+        "en": "A dedicated vegetarian section: dry-fried green beans (no pork), vegetarian Mapo tofu, fish-fragrant eggplant and a dozen more dishes, all fully vegetarian on request."
       }
     }
   ],

@@ -147,20 +147,39 @@ function anchorChip() {
 function chipsFor(id) {
   const n = NODES[id]; const fresh = (arr) => arr.filter(x => !S.visited.includes(x) && NODES[x]);
   const kids = (n.children || []).filter(x => x !== id && NODES[x]);
-  let out = [];
+  let out = [], crumb = null;
   if (S.depth < 2) {
     const pool = QUICK.filter(q => q !== id); out = fresh(pool).concat(pool).slice(0, 2);
   } else {
     const grand = kids.flatMap(k => NODES[k].children || []).filter(x => x !== id && !kids.includes(x));
     const nonQ = (a) => a.filter(x => !QUICK.includes(x));
-    let branch = fresh(nonQ(kids))[0] || fresh(nonQ(grand))[0] || fresh(kids)[0];
-    if (!branch) { const pool = fresh(nonQ(IDS.filter(x => x !== id))); branch = pool[Math.floor(Math.random() * pool.length)] || kids[0]; }
+    /* interest-cluster bias (generalized persona layer): the dominant cluster
+       across the last 3 visited nodes pulls the branch chip its way */
+    const trail = S.visited.slice(-3).map(v => NODES[v] && NODES[v].cluster).filter(c => c !== undefined);
+    const votes = {}; trail.forEach(c => { votes[c] = (votes[c] || 0) + 1; });
+    const dom = Object.keys(votes).find(c => votes[c] >= 2);
+    const byC = (arr) => dom === undefined ? arr
+      : arr.slice().sort((a, b) => ((String(NODES[b].cluster) === dom) ? 1 : 0) - ((String(NODES[a].cluster) === dom) ? 1 : 0));
+    let branch = fresh(byC(nonQ(kids)))[0] || fresh(byC(nonQ(grand)))[0] || fresh(kids)[0];
+    if (!branch) {
+      /* breadcrumb: deep in an exhausted thread, offer the way back to its root */
+      if (S.depth >= 4) {
+        let root = id; const seen = new Set();
+        while ((PARENTS[root] || []).length && !seen.has(root)) { seen.add(root); root = PARENTS[root][0]; }
+        if (root !== id && NODES[root]) crumb = root;
+      }
+      const pool = fresh(nonQ(IDS.filter(x => x !== id)));
+      branch = crumb || (dom !== undefined && byC(pool)[0]) || pool[Math.floor(Math.random() * pool.length)] || kids[0];
+    }
+    /* stage prior: the mainline slot advances down the quick list as the
+       conversation deepens — overview first, specifics later */
     const mains = QUICK.filter(q => q !== id && q !== branch);
-    const main = fresh(mains)[0] || mains[S.depth % mains.length];
+    const fm = fresh(mains);
+    const main = fm[Math.min(Math.floor(Math.max(0, S.depth - 2) / 3), Math.max(0, fm.length - 1))] || mains[S.depth % mains.length];
     out = [branch, main].filter(Boolean);
   }
   const uniq = [...new Set(out)];
-  return uniq.map(cid => [qOf(cid), () => { userSay(qOf(cid)); answer(cid); }]).concat([anchorChip()]);
+  return uniq.map(cid => [(cid === crumb ? '↩ ' : '') + qOf(cid), () => { userSay(qOf(cid)); answer(cid); }]).concat([anchorChip()]);
 }
 function answer(id) {
   const n = NODES[id];

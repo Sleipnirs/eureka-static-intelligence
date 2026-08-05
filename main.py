@@ -200,21 +200,39 @@ def parse_loose(text: str, fallback_name: str) -> dict:
 
     # ── strategy A: explicit Q/A markers ──
     def strat_markers():
-        pairs, q, a, mode = [], [], [], None
+        # True-bilingual aware: 问：=zh / Q:=en, 答：=zh / A:=en. A second-language
+        # question marker arriving BEFORE any answer joins the same entry, so
+        # merchants can write paired 问/Q + 答/A blocks for real bilingual packs.
+        entries, cur = [], None
+
+        def close():
+            nonlocal cur
+            if cur and (cur["q"]["zh"] or cur["q"]["en"]) and (cur["a"]["zh"] or cur["a"]["en"]):
+                cur.pop("mode", None)
+                entries.append(cur)
+            cur = None
+
         for ln in body.split("\n"):
-            if re.match(r"^\s*[*★]?\s*(q\d*|问\d*)\s*[:：.、)]", ln, re.I):
-                if q and a:
-                    pairs.append(("\n".join(q), "\n".join(a)))
-                q, a, mode = [re.sub(r"^\s*([*★]?)\s*(q\d*|问\d*)\s*[:：.、)]\s*", r"\1", ln, flags=re.I)], [], "q"
-            elif re.match(r"^\s*(a\d*|答\d*)\s*[:：.、)]", ln, re.I):
-                a, mode = [re.sub(r"^\s*(a\d*|答\d*)\s*[:：.、)]\s*", "", ln, flags=re.I)], "a"
-            elif mode == "q" and ln.strip():
-                q.append(ln.strip())
-            elif mode == "a" and ln.strip():
-                a.append(ln.strip())
-        if q and a:
-            pairs.append(("\n".join(q), "\n".join(a)))
-        return pairs
+            mq = re.match(r"^\s*([*★]?)\s*(q\d*|问\d*)\s*[:：.、)]\s*(.*)$", ln, re.I)
+            ma = re.match(r"^\s*(a\d*|答\d*)\s*[:：.、)]\s*(.*)$", ln, re.I)
+            if mq:
+                lang = "en" if mq.group(2)[0].lower() == "q" else "zh"
+                if cur and (cur["a"]["zh"] or cur["a"]["en"]):
+                    close()
+                if cur is None:
+                    cur = {"q": {"zh": "", "en": ""}, "a": {"zh": "", "en": ""}, "star": False, "mode": None}
+                cur["star"] = cur["star"] or bool(mq.group(1))
+                cur["q"][lang] = (cur["q"][lang] + " " + mq.group(3).strip()).strip()
+                cur["mode"] = ("q", lang)
+            elif ma and cur is not None:
+                lang = "en" if ma.group(1)[0].lower() == "a" else "zh"
+                cur["a"][lang] = (cur["a"][lang] + " " + ma.group(2).strip()).strip()
+                cur["mode"] = ("a", lang)
+            elif cur is not None and cur.get("mode") and ln.strip():
+                k, lang = cur["mode"]
+                cur[k][lang] = (cur[k][lang] + "\n" + ln.strip()).strip()
+        close()
+        return entries
 
     # ── strategy B: markdown headers ──
     def strat_md():
@@ -270,15 +288,26 @@ def parse_loose(text: str, fallback_name: str) -> dict:
 
     faq = []
     langs_seen = []
-    for qtext, atext in pairs:
-        mainline = qtext.startswith("*") or qtext.startswith("★")
-        qtext = qtext.lstrip("*★ ").strip()
-        entry = {"q": _bi(qtext), "a": _bi(atext)}
-        if mainline:
-            entry["mainline"] = True
-        lang = _lang_of(qtext)
-        if lang not in langs_seen:
-            langs_seen.append(lang)
+    for item in pairs:
+        if isinstance(item, dict):  # bilingual-aware markers strategy
+            qd, ad = item["q"], item["a"]
+            entry = {"q": {"zh": qd["zh"] or qd["en"], "en": qd["en"] or qd["zh"]},
+                     "a": {"zh": ad["zh"] or ad["en"], "en": ad["en"] or ad["zh"]}}
+            if item.get("star"):
+                entry["mainline"] = True
+            for l in ("zh", "en"):
+                if qd[l] and l not in langs_seen:
+                    langs_seen.append(l)
+        else:
+            qtext, atext = item
+            mainline = qtext.startswith("*") or qtext.startswith("★")
+            qtext = qtext.lstrip("*★ ").strip()
+            entry = {"q": _bi(qtext), "a": _bi(atext)}
+            if mainline:
+                entry["mainline"] = True
+            lang = _lang_of(qtext)
+            if lang not in langs_seen:
+                langs_seen.append(lang)
         faq.append(entry)
 
     name = brand.get("name") or fallback_name
@@ -396,6 +425,25 @@ def main() -> int:
         if not node.get("children"):
             order = sorted(range(n), key=lambda j: -sim[i][j])
             node["children"] = [faq[j]["id"] for j in order if j != i][:2]
+
+    # interest clusters (generalized persona layer): greedy similarity grouping.
+    # The engine votes over the visitor's recent trail and biases the branch
+    # chip toward the dominant cluster — deterministic, frozen at compile time.
+    CLUSTER_T = 0.18
+    cluster_of = [-1] * n
+    next_c = 0
+    for i in range(n):
+        best_j, best_s = -1, CLUSTER_T
+        for j in range(i):
+            if sim[i][j] > best_s:
+                best_j, best_s = j, sim[i][j]
+        if best_j >= 0:
+            cluster_of[i] = cluster_of[best_j]
+        else:
+            cluster_of[i] = next_c
+            next_c += 1
+    for i, node in enumerate(faq):
+        node["cluster"] = cluster_of[i]
     flagged = [x["id"] for x in faq if x.get("mainline")]
     if len(flagged) >= 4:
         quick = flagged[:10]
@@ -440,7 +488,7 @@ def main() -> int:
         data["brand"]["anchor"]["target"] = quick[0]
     pack = {
         "brand": data["brand"],
-        "faq": [{k: v for k, v in node.items() if k in ("id", "q", "a", "keywords", "children", "link", "more")} for node in faq],
+        "faq": [{k: v for k, v in node.items() if k in ("id", "q", "a", "keywords", "children", "link", "more", "cluster")} for node in faq],
         "quick": quick,
         "vocab": {
             "synonymsStemmed": syn,
