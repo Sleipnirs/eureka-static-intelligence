@@ -234,6 +234,56 @@ def parse_loose(text: str, fallback_name: str) -> dict:
         close()
         return entries
 
+    # ── strategy A2: verbose labeled bilingual exports ──
+    # "Question (ZH) / 问题（中文）: …" / "Answer (EN) …: …" + Tags/标签 + [FAQ-201] Section
+    def strat_labeled():
+        QRE = re.compile(r"^\s*([*★]?)\s*(?:question|问题)\s*[（(]\s*(zh|en|中文|英文|english|chinese)\s*[）)][^:：]*[:：]\s*(.*)$", re.I)
+        ARE = re.compile(r"^\s*(?:answer|回答|答案)\s*[（(]\s*(zh|en|中文|英文|english|chinese)\s*[）)][^:：]*[:：]\s*(.*)$", re.I)
+        TRE = re.compile(r"^\s*(?:tags?|标签)\s*[/／]?[^:：]*[:：]\s*(.*)$", re.I)
+        SRE = re.compile(r"^\s*(?:\[[^\]]+\]\s*)?(?:section|分类)\s*[/／]?[^:：]*[:：]", re.I)
+        IDRE = re.compile(r"\[((?:faq|FAQ)[-_]?\w+)\]")
+
+        def L(x):
+            return "zh" if x.lower() in ("zh", "中文", "chinese") else "en"
+
+        entries, cur = [], None
+
+        def close():
+            nonlocal cur
+            if cur and (cur["q"]["zh"] or cur["q"]["en"]) and (cur["a"]["zh"] or cur["a"]["en"]):
+                cur.pop("mode", None)
+                entries.append(cur)
+            cur = None
+
+        for ln in body.split("\n"):
+            mq, ma, mt = QRE.match(ln), ARE.match(ln), TRE.match(ln)
+            if mq:
+                lang = L(mq.group(2))
+                if cur and (cur["a"]["zh"] or cur["a"]["en"]):
+                    close()
+                if cur is None:
+                    cur = {"q": {"zh": "", "en": ""}, "a": {"zh": "", "en": ""}, "star": False, "kw": [], "nid": None, "mode": None}
+                cur["star"] = cur["star"] or bool(mq.group(1))
+                cur["q"][lang] = (cur["q"][lang] + " " + mq.group(3).strip()).strip()
+                cur["mode"] = ("q", lang)
+            elif ma and cur is not None:
+                lang = L(ma.group(1))
+                cur["a"][lang] = (cur["a"][lang] + " " + ma.group(2).strip()).strip()
+                cur["mode"] = ("a", lang)
+            elif mt and cur is not None:
+                cur["kw"] = [t.strip() for t in re.split(r"[,，;；]", mt.group(1)) if t.strip()][:10]
+                cur["mode"] = None
+            elif SRE.match(ln) and cur is not None:
+                m = IDRE.search(ln)
+                if m:
+                    cur["nid"] = m.group(1).lower().replace("_", "-")
+                cur["mode"] = None
+            elif cur is not None and cur.get("mode") and ln.strip():
+                k, lang = cur["mode"]
+                cur[k][lang] = (cur[k][lang] + "\n" + ln.strip()).strip()
+        close()
+        return entries
+
     # ── strategy B: markdown headers ──
     def strat_md():
         pairs, q, a = [], None, []
@@ -279,8 +329,14 @@ def parse_loose(text: str, fallback_name: str) -> dict:
             pairs.append((q, "\n".join(a)))
         return pairs
 
-    candidates = {"markers": strat_markers(), "markdown": strat_md(), "numbered": strat_num(), "qmark": strat_qmark()}
-    strategy, pairs = max(candidates.items(), key=lambda kv: len(kv[1]))
+    candidates = {"labeled": strat_labeled(), "markers": strat_markers(), "markdown": strat_md(),
+                  "numbered": strat_num(), "qmark": strat_qmark()}
+    # explicitness hierarchy: an explicit format that yields enough pairs beats
+    # a sloppier one with a higher raw count (qmark double-counts bilingual files)
+    strategy = next((k for k in ("labeled", "markers", "markdown", "numbered", "qmark") if len(candidates[k]) >= 5), None)
+    if strategy is None:
+        strategy, _ = max(candidates.items(), key=lambda kv: len(kv[1]))
+    pairs = candidates[strategy]
     if len(pairs) < 5:
         raise SystemExit(f"Could not detect enough Q&A pairs (best strategy '{strategy}' found {len(pairs)}). "
                          "Format tips: 'Q:/A:' or '问：/答：' markers, '## question' headers, numbered items, "
@@ -295,6 +351,10 @@ def parse_loose(text: str, fallback_name: str) -> dict:
                      "a": {"zh": ad["zh"] or ad["en"], "en": ad["en"] or ad["zh"]}}
             if item.get("star"):
                 entry["mainline"] = True
+            if item.get("kw"):
+                entry["keywords"] = item["kw"]
+            if item.get("nid"):
+                entry["id"] = item["nid"]
             for l in ("zh", "en"):
                 if qd[l] and l not in langs_seen:
                     langs_seen.append(l)
@@ -310,7 +370,11 @@ def parse_loose(text: str, fallback_name: str) -> dict:
                 langs_seen.append(lang)
         faq.append(entry)
 
-    name = brand.get("name") or fallback_name
+    name = brand.get("name")
+    if not name:
+        segs = [x for x in re.split(r"[_\-\s]+", fallback_name) if x]
+        name = segs[0] if segs else "Chatbox"
+        warnings.append(f"brand name derived from filename → '{name}' — add a 品牌:/Brand: header line for full control")
     langs = brand.get("langs") or langs_seen or ["en"]
     default_welcome = {"zh": f"你好！我是{name}智能助手——常见问题都可以问我。需要什么帮助？",
                        "en": f"Hi! I am the {name} assistant — ask me anything. How can I help?"}
@@ -348,7 +412,7 @@ def ingest(src: Path) -> Path:
         raise SystemExit("Legacy .doc is a binary format — please Save As .docx or .txt and rerun.")
     else:
         raise SystemExit(f"Unsupported input type: {ext} (accepted: .json .txt .md .docx)")
-    data, strategy, warns = parse_loose(text, src.stem.replace("_", " ").replace("-", " ").title())
+    data, strategy, warns = parse_loose(text, src.stem)
     out = src.with_suffix(".generated.json")
     out.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[ingest] strategy={strategy} · {len(data['faq'])} Q&A pairs · brand='{data['brand']['name']}' → {out}")
@@ -367,7 +431,8 @@ def main() -> int:
 
     faq = data["faq"]
     n = len(faq)
-    assert n >= 10, "Need at least 10 FAQ entries"
+    assert n >= 5, "Need at least 5 FAQ entries"
+    size_warns = ([f"only {n} FAQ entries — the experience gets solid at 30+, rich at 100"] if n < 10 else [])
 
     # ids
     seen = set()
@@ -451,6 +516,10 @@ def main() -> int:
         central = sorted(range(n), key=lambda i: -sum(sim[i]))
         quick = flagged + [faq[i]["id"] for i in central if faq[i]["id"] not in flagged]
         quick = quick[:10]
+    # default/faq anchors with no target would dead-click — aim at the top quick question
+    anc = data['brand'].get('anchor')
+    if anc and anc.get('action') == 'faq' and not anc.get('target'):
+        anc['target'] = quick[0] if quick else faq[0]['id']
 
     # vocab: stem the synonym map for the engine
     syn = {stem(k.lower()): [stem(v.lower()) for v in vs] for k, vs in (data.get("vocab", {}).get("synonyms") or {}).items()}
@@ -499,7 +568,7 @@ def main() -> int:
         "toolbox": data.get("toolbox") or ["calculator", "json", "timestamp", "units", "textstats", "aeo"],
     }
 
-    compile_warns: list = []
+    compile_warns: list = list(size_warns)
     html = TEMPLATE.read_text(encoding="utf-8")
     html = html.replace("%%BRAND_NAME%%", data["brand"]["name"])
     html = html.replace("%%ACCENT%%", norm_accent(data["brand"].get("accent"), compile_warns))
