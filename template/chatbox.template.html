@@ -178,6 +178,10 @@ IDS.forEach(id => {
 });
 function tw(t) { const d = TDF[t] || 0; return d <= 2 ? 3 : d <= 5 ? 2 : d <= 12 ? 1 : 0; }
 const PARENTS = {}; IDS.forEach(id => (NODES[id].children || []).forEach(c => (PARENTS[c] = PARENTS[c] || []).push(id)));
+/* id-prefix ≈ topic only when the prefix actually discriminates: auto-generated
+   ids ("how-much-…","how-do-…") share prefixes by accident, curated ids by design */
+const PFXN = {}; IDS.forEach(id => { const p = id.split('-')[0]; PFXN[p] = (PFXN[p] || 0) + 1; });
+function sameTopic(a, b) { const p = a.split('-')[0]; return a !== b && p === b.split('-')[0] && PFXN[p] <= Math.max(3, IDS.length / 4); }
 
 function augment(text, S) {
   let out = text;
@@ -255,7 +259,7 @@ function score(raw, S) {
       rec.forEach(r => {
         if ((NODES[r] && (NODES[r].children || []).includes(id))) sc += 2;
         else if ((PARENTS[r] || []).includes(id)) sc += 1.5;
-        else if (r.split('-')[0] === id.split('-')[0] && r !== id) sc += 1;
+        else if (sameTopic(r, id)) sc += 1;
       });
     }
     if (sc > 0) res.push({ id, sc });

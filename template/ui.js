@@ -184,8 +184,11 @@ function chipsFor(id) {
 function answer(id) {
   const n = NODES[id];
   const last = S.visited[S.visited.length - 1];
-  const same = S.depth >= 2 && last && last !== id && (last.split('-')[0] === id.split('-')[0] || (NODES[last] && (NODES[last].children || []).includes(id)) || (PARENTS[last] || []).includes(id));
-  const lead = same ? T[LOC].follow : '';
+  const same = S.depth >= 2 && last && last !== id && (sameTopic(last, id) || (NODES[last] && (NODES[last].children || []).includes(id)) || (PARENTS[last] || []).includes(id));
+  /* connective is a rhythm device, not a tic: on auto-generated trees every
+     branch chip is a child of the last node, so throttle to once per 3 steps */
+  const lead = same && S.depth - (S.followAt === undefined ? -9 : S.followAt) >= 3 ? T[LOC].follow : '';
+  if (lead) S.followAt = S.depth;
   let widget = null;
   if (n.link) { widget = null; }
   const chips = chipsFor(id);
